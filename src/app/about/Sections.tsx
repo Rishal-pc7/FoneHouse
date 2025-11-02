@@ -52,15 +52,13 @@ export function ServicesWeOffer() {
     </ScrollAnimation>
   )
 }
-
-
 export function AboutUs() {
     return (
         <ScrollAnimation initialOptions={{y:40}} animatedOptions={{y:0}}>
         <div className='flex flex-col gap-3 p-8 md:p-20  w-full items-center justify-center'>
             <h1 className='text-brandBlue font-extrabold text-3xl'>About Us</h1>
             <h4 className='text-white/80  font-semibold text-xl'>Fone House is dedicated to providing Saudi Arabia with leading mobile sales, expert repairs, and authentic accessories. Our store brings together the latest mobile brands and a team of skilled professionals, ensuring that every customer receives honest advice and top-quality service—whether you're shopping for yourself or your business.</h4>
-            <h4 className='text-white/80  font-semibold text-xl'>With years of experience and a strong local presence, we make mobile solutions simple, affordable, and trustworthy. From individual upgrades to wholesale orders, Fone House delivers the reliability and care you deserve to stay connected in today’s fast-paced world.</h4>
+            <h4 className='text-white/80  font-semibold text-xl'>With years of experience and a strong local presence, we make mobile solutions simple, affordable, and trustworthy. From individual upgrades to wholesale orders, Fone House delivers the reliability and care you deserve to stay connected in today's fast-paced world.</h4>
         </div>
         </ScrollAnimation>
     )    
