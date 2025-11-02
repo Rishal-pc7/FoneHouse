@@ -1,5 +1,4 @@
 import {
-  Sheet,
   SheetContent,
   SheetFooter,
   SheetHeader,

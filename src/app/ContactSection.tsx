@@ -1,8 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { ScrollAnimation } from './Template'
-import { Whatsapp, XTwitter } from '../../public/customSvgs/Icons'
+import { XTwitter } from '../../public/customSvgs/Icons'
 import { Instagram } from 'lucide-react'
 
 function ContactSection() {

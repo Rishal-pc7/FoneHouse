@@ -14,7 +14,12 @@ function page() {
             <div className="absolute inset-0 bg-black/70  z-10"></div>
             <Template className="content text-white/90 md:py-5 py-3 z-10 flex flex-col gap-3 md:gap-5">
               <h1 className="font-extrabold text-xl md:text-3xl">Empowering Saudi Arabia with Trusted Mobile Solutions</h1>
-              <h5 className="font-light  md:w-3/4 text-base md:text-xl">Discover Fone House—one of Saudi Arabia’s leading mobile shops for top brands, expert repairs, and genuine accessories. Our dedicated team delivers honest advice, fast service, and quality products for every customer—retail and wholesale. Stay connected with confidence!</h5>
+              <h5 className="font-light  md:w-3/4 text-base md:text-xl">Discover Fone House—one of Saudi Arabia&apos;s 
+              leading mobile shops for top brands, 
+              expert repairs, and genuine accessories. 
+              Our dedicated team delivers honest advice, 
+              fast service, and quality products for every
+               customer—retail and wholesale. Stay connected with confidence!</h5>
             </Template>
       </div>
       <AboutUs/>

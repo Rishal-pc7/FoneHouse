@@ -1,4 +1,3 @@
-import { Globe } from "lucide-react";
 import Link from "next/link";
 
 export function Navlinks ({classes}:Readonly<{classes:string}>){
