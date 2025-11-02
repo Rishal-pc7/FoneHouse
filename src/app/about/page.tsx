@@ -4,21 +4,22 @@ import Link from 'next/link';
 import { OurStory, OurVisionandMission, WhyChooseUS } from './Sections';
 import ContactSection from '../ContactSection';
 import {Template} from '../Template';
-
+import heroImg from './hero.jpg'
 function page() {
   return (
     <>
-    {/* <div className='relative grid md:grid-cols-2 md:grid-rows-none grid-rows-2 w-full h-auto md:h-[90vh]  bg-[#24B3DA]/45 pt-28 md:pt-16 pb-0'>
-      <Template className="flex flex-col justify-center gap-5 basis-1/2 h-full px-8 md:px-16">
-        <h1 className='font-extrabold text-[#1C4177] text-2xl'>Your Trusted Cleaning Partners in Saudi Arabia</h1>
-        <h4 className='text-black/80 md:text-base font-semibold'>At Cleaning Llama, we believe a spotless space fuels a happier, healthier life. Proudly based in Saudi Arabia, our dedicated team of experienced professionals—each trained in top-quality standards—delivers reliable, detail-driven cleaning with a smile. Whether it’s your home, office, or commercial space, we’re here to make every corner shine, so you can focus on what matters most.</h4>
-        <Link href='/contact' className="rounded-lg bg-[#1C4177] font-semibold w-fit p-4 text-center text-base text-white">Request Our Service Now</Link>
-      </Template>
-      <div className="flex justify-center min-h-[300px] relative">
-        <Image src='/about.png' alt="About Us" className='relative object-cover z-10 w-full h-full' fill  loading='lazy' />
-      </div>
-    </div>
-    <OurStory/>
+    <div className="relative h-[90vh] w-full flex pb-20 md:pb-0 items-end-safe md:items-center text-white">      
+            <Image src={heroImg} placeholder="blur"  alt="Clean modern interior" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  priority unoptimized  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
+            <div className="absolute inset-0 bg-black/70  z-10"></div>
+            <Template className="content md:p-5 p-3 z-10 flex flex-col gap-3 md:gap-5">
+              <h1 className="font-extrabold text-xl md:text-3xl">Your One-Stop Shop for All Things Mobile</h1>
+              <h5 className="font-light text-base md:text-xl">Experience the Best in Mobile Sales, Fast Repairs, and Genuine Accessories for Every Need</h5>
+              <Link href={"/contact"} className="font-medium backdrop-blur-lg bg-white/5 border border-white/30 px-4 py-2 w-fit text-center">
+                Learn More
+              </Link>
+            </Template>
+          </div>
+    {/* <OurStory/>
     <OurVisionandMission/>
     <WhyChooseUS/>
     <ContactSection/> */}

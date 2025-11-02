@@ -20,7 +20,7 @@ const urbanist = Urbanist({
 
 export const metadata: Metadata = {
   title: "Fone House",
-  description: "Saudi Arabia's premier cleaning service. 30 years, 25,000 happy clients, and professional Indian teams. Get your reliable, detailed cleaning quote today.",
+  description: "Fone House is Saudi Arabia’s trusted shop for mobile sales, expert repairs, and genuine accessories. Discover top brands, professional service, and fast local support—your one-stop solution for everything mobile.",
 };
 
 export default function RootLayout({
