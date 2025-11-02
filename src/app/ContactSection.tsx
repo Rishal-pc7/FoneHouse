@@ -7,13 +7,13 @@ import { Instagram } from 'lucide-react'
 
 function ContactSection() {
   return (
-    <div className="grid  w-full  h-[140vh] md:h-screen gap-10 px-5 md:px-20 py-10 md:py-20 relative">
-      <h2 className='text-6xl md:text-8xl text-center z-40 font-extrabold text-white/80'>Contact Us</h2>
-      <ScrollAnimation initialOptions={{x:40}} animatedOptions={{x:0}} className=' min-h-[50vh] flex flex-wrap gap-3 md:flex-nowrap  items-start justify-center absolute top-20 md:top-35 z-10 backdrop-blur-3xl bg-white/15 border border-white/5 rounded-xl shadow-lg mx-5 md:mx-40 py-10 md:py-16 px-6 md:px-10' >
+    <div className="grid  w-full  h-min md:h-screen gap-10 px-5 md:px-20 py-10 md:py-20 relative">
+      <h2 className='text-5xl md:text-8xl text-center z-40 font-extrabold text-white/80'>Contact Us</h2>
+      <ScrollAnimation initialOptions={{x:40}} animatedOptions={{x:0}} className=' h- flex flex-wrap gap-3 md:flex-nowrap  items-start justify-center -mt-15  z-10 backdrop-blur-3xl bg-white/15 border border-white/5 rounded-xl shadow-lg mx-5 md:mx-40 py-10 md:py-16 px-6 md:px-10' >
             <div className="basis-full md:basis-1/2 text-left flex flex-col gap-3">
               <h1 className="font-extrabold text-2xl md:text-3xl text-brandBlue">Get In Touch</h1>
               <h2 className="font-semibold text-lg md:text-xl text-white/80">Contact our team for quick support, questions, or service available every day by phone, WhatsApp, or email.</h2>
-              <ul className='list-disc font-semibold text-lg md:text-xl text-white/80'>
+              <ul className='font-semibold text-lg md:text-xl text-white/80'>
                 <li>Phone: +966 5X XXX XXXX</li>
                 <li>Whatsapp: +966 5X XXX XXXX</li>
                 <li>Email: info@fonehouse.sa</li>

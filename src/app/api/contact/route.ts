@@ -1,6 +1,5 @@
-import { Resend } from "resend";
 import { z } from "zod";
-
+import nodemailer from "nodemailer";
 const formSchema = z.object({
   fullname: z.string().min(2),
   email: z.string().email(),
@@ -19,19 +18,17 @@ export async function POST(req: Request):Promise<Response> {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+    const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "rishal01010@gmail.com", // your Gmail address
+      pass: "bamr wcxf ecqb dvlg", // your Gmail app password (not your main password!)
+    },
+    });
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "Server misconfiguration: missing RESEND_API_KEY" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: "Acme<onboarding@resend.dev>",
-      to: "rishal01010@gmail.com",
+    await transporter.sendMail({
+      from: "Fone House <fonehouseofficial.fh@gmail.com>",
+      to: "fonehouseofficial.fh@gmail.com",
       subject: "Enquiry from "+result.data.fullname,
       html: `<p><strong>From:</strong> ${result.data.fullname}</p> 
              <p><strong>Email:</strong>${result.data.email}</p>

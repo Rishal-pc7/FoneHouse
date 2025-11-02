@@ -3,7 +3,6 @@ import { Manrope,Urbanist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
-import WhatsappButton from "@/components/Footer/WhatsappButton";
 
 
 
@@ -19,8 +18,8 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  title: "Fone House",
-  description: "Fone House is Saudi Arabia’s leading destination for retail and wholesale mobile sales, expert repairs, and genuine accessories. Trusted by thousands for top brands, quality service, and competitive prices—perfect for both individual customers and business needs.",
+  title: "FoneHouse",
+  description: "FoneHouse is Saudi Arabia’s leading destination for retail and wholesale mobile sales, expert repairs, and genuine accessories. Trusted by thousands for top brands, quality service, and competitive prices—perfect for both individual customers and business needs.",
 };
 
 export default function RootLayout({

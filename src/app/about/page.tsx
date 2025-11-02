@@ -1,28 +1,27 @@
 import React from 'react'
 import Image from 'next/image';
-import Link from 'next/link';
-import { OurStory, OurVisionandMission, WhyChooseUS } from './Sections';
+import { AboutUs, ServicesWeOffer } from './Sections';
 import ContactSection from '../ContactSection';
 import {Template} from '../Template';
 import heroImg from './hero.jpg'
+import BrandsSection from '../BrandsSection';
+import LocationSection from '../LocationSection';
 function page() {
   return (
     <>
-    <div className="relative h-[90vh] w-full flex pb-20 md:pb-0 items-end-safe md:items-center text-white">      
+      <div className="relative px-4 md:px-10 h-[90vh] w-full flex pb-20 md:pb-0 items-end-safe md:items-center text-white">      
             <Image src={heroImg} placeholder="blur"  alt="Clean modern interior" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  priority unoptimized  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
             <div className="absolute inset-0 bg-black/70  z-10"></div>
-            <Template className="content md:p-5 p-3 z-10 flex flex-col gap-3 md:gap-5">
-              <h1 className="font-extrabold text-xl md:text-3xl">Your One-Stop Shop for All Things Mobile</h1>
-              <h5 className="font-light text-base md:text-xl">Experience the Best in Mobile Sales, Fast Repairs, and Genuine Accessories for Every Need</h5>
-              <Link href={"/contact"} className="font-medium backdrop-blur-lg bg-white/5 border border-white/30 px-4 py-2 w-fit text-center">
-                Learn More
-              </Link>
+            <Template className="content text-white/90 md:py-5 py-3 z-10 flex flex-col gap-3 md:gap-5">
+              <h1 className="font-extrabold text-xl md:text-3xl">Empowering Saudi Arabia with Trusted Mobile Solutions</h1>
+              <h5 className="font-light  md:w-3/4 text-base md:text-xl">Discover Fone House—one of Saudi Arabia’s leading mobile shops for top brands, expert repairs, and genuine accessories. Our dedicated team delivers honest advice, fast service, and quality products for every customer—retail and wholesale. Stay connected with confidence!</h5>
             </Template>
-          </div>
-    {/* <OurStory/>
-    <OurVisionandMission/>
-    <WhyChooseUS/>
-    <ContactSection/> */}
+      </div>
+      <AboutUs/>
+      <ServicesWeOffer/>
+      <BrandsSection/>
+      <LocationSection/>
+      <ContactSection/>
     </>
   )
 }

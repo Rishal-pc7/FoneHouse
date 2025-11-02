@@ -98,7 +98,7 @@ function ContactForm() {
                  name={f.name as keyof z.infer<typeof formSchema>}
                  render={({ field }) => (
                 <FormItem>
-                   <FormLabel className="font-semibold font-urbanist text-[#1C4177] text-lg">{f.label}</FormLabel>
+                   <FormLabel className="font-semibold font-urbanist text-white/80 text-lg">{f.label}</FormLabel>
                    <FormControl>
                        {f.name==="message" ? <Textarea key={f.key} placeholder={f.placeholder} {...field} /> :
                        <Input key={f.key+5555} placeholder={f.placeholder} type={f.type} {...field} />

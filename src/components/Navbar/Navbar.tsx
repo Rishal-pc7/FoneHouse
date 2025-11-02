@@ -1,10 +1,8 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 import { Navlinks } from './NavActions'
-import { Globe } from 'lucide-react'
 import MobNav from './MobNav'
-import Logo from './logo.png'
+import Logo from '../logo.png'
 
 function Navbar() {
   return (
