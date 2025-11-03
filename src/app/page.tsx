@@ -11,7 +11,7 @@ export default function Home() {
     <>
     
       <div className="relative md:h-[90vh] h-[80vh] w-full flex px-4 md:px-8 pb-20 md:pb-0 items-end md:items-center text-white">      
-        <Image src={heroImg} placeholder="blur"  alt="FoneHouse" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  quality={70} priority   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
+        <Image src={heroImg} placeholder="blur"  alt="FoneHouse" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  quality={90} fetchPriority="high" priority   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
         <div className="absolute inset-0 bg-black/30  z-10"></div>
         <Template className="content md:w-1/2 z-20 md:py-5 py-3 text-white/80  flex flex-col gap-3 md:gap-5">
           <h1 className="font-extrabold text-xl md:text-3xl">Your One-Stop Shop for All Things Mobile</h1>
