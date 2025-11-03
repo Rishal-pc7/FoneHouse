@@ -7,10 +7,10 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel"
-import Riyadh from "./riyadh.jpg"
-import Madina from "./madina.jpg"
-import Tuwaiq from "./tuwaiq.jpg"
-import CityFlower from "./cityFlower.jpg"
+import Riyadh from "./riyadh.webp"
+import Madina from "./madina.webp"
+import Tuwaiq from "./tuwaiq.webp"
+import CityFlower from "./cityFlower.webp"
 import { ScrollAnimation } from "../../app/Template"
 import Image from "next/image"
 const brands=[

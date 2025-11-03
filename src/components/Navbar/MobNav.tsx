@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { Navlinks } from "./NavActions"
 import { Whatsapp, XTwitter } from "../../../public/customSvgs/Icons"
 import Image from "next/image"
-import Logo from '../logo.png'
+import Logo from '../logo.webp'
 import SideBar from "./SideBar"
 
 function MobNav() {

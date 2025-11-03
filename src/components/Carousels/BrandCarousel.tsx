@@ -14,31 +14,31 @@ import Image from "next/image"
 const brands=[
     {
         name: "Apple",
-        logoUrl: "/apple.png",
+        logoUrl: "/apple.webp",
     },
     {
         name: "Samsung",
-        logoUrl: "/samsung.png",
+        logoUrl: "/samsung.webp",
     },
     {
         name: "Realme",
-        logoUrl: "/realme.jpg",
+        logoUrl: "/realme.webp",
     },
     {
         name: "Honor",
-        logoUrl: "/honor.png",
+        logoUrl: "/honor.webp",
     },
     {
         name: "Huawei",
-        logoUrl: "/huawei.png",
+        logoUrl: "/huawei.webp",
     },
     {
         name: "Infinix",
-        logoUrl: "/infinix.png",
+        logoUrl: "/infinix.webp",
     },
     {
         name: "Redmi",
-        logoUrl: "/redmi.png",
+        logoUrl: "/redmi.webp",
     },
 ]
 

@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Whatsapp, XTwitter } from "../../../public/customSvgs/Icons"
 import { Instagram, Mail } from "lucide-react"
 import Image from "next/image"
-import Logo from '../logo.png'
+import Logo from '../logo.webp'
 import VAT from './tax.webp'
 function Footer() {
   return (

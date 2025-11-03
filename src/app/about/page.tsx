@@ -3,14 +3,14 @@ import Image from 'next/image';
 import { AboutUs, ServicesWeOffer } from './Sections';
 import ContactSection from '../ContactSection';
 import {Template} from '../Template';
-import heroImg from './hero.jpg'
+import heroImg from './hero.webp'
 import BrandsSection from '../BrandsSection';
 import LocationSection from '../LocationSection';
 function page() {
   return (
     <>
       <div className="relative px-4 md:px-10 h-[90vh] w-full flex pb-20 md:pb-0 items-end-safe md:items-center text-white">      
-            <Image src={heroImg} placeholder="blur"  alt="Clean modern interior" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  priority unoptimized  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
+            <Image src={heroImg} placeholder="blur"  alt="Clean modern interior" className="absolute inset-0 object-cover  object-[63%] w-full h-full z-0"  fill  priority quality={70} unoptimized  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 100vw"/>
             <div className="absolute inset-0 bg-black/70  z-10"></div>
             <Template className="content text-white/90 md:py-5 py-3 z-10 flex flex-col gap-3 md:gap-5">
               <h1 className="font-extrabold text-xl md:text-3xl">Empowering Saudi Arabia with Trusted Mobile Solutions</h1>
