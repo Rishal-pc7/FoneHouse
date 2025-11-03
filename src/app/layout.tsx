@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 
 
-
 const manrope = Manrope({
   variable: "--font-manrope",
   weight: ['400', '500', '600','700'],
@@ -18,6 +17,9 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
+  icons:{
+    icon: '/logo.jpg',
+  },
   title: "FoneHouse",
   description: "FoneHouse is Saudi Arabia’s leading destination for retail and wholesale mobile sales, expert repairs, and genuine accessories. Trusted by thousands for top brands, quality service, and competitive prices—perfect for both individual customers and business needs.",
 };

@@ -2,7 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import { Navlinks } from './NavActions'
 import MobNav from './MobNav'
-import Logo from '../logo.webp'
+import Logo from '../../logo.webp'
 
 function Navbar() {
   return (

@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Whatsapp, XTwitter } from "../../../public/customSvgs/Icons"
 import { Instagram, Mail } from "lucide-react"
 import Image from "next/image"
-import Logo from '../logo.webp'
+import Logo from '../../logo.webp'
 import VAT from './tax.webp'
 function Footer() {
   return (
@@ -20,16 +20,13 @@ function Footer() {
 
           </div>
           <div className="flex gap-6 md:gap-4 justify-center ">
-              <Link href="/" className="p-2 rounded-3xl border-2">
+              <Link href="https://wa.me/+966530773448?text=Hello%2C%20I%20am%20interested%20in%20your%20Products " className="p-2 rounded-3xl border-2">
                 <Whatsapp className="w-6 h-6"/>
               </Link>
-              <Link href="/" className="p-2 rounded-3xl border-2 flex items-center">
-                <XTwitter />
-              </Link>
-              <Link href="/" className="p-2 rounded-3xl border-2 ">
+              <Link href="mailto:fonehouseofficial.fh@gmail.com" className="p-2 rounded-3xl border-2 ">
                 <Mail />
               </Link>
-              <Link href="/" className="p-2 rounded-3xl border-2">
+              <Link href="https://www.instagram.com/fonehouse_officials_ksa?igsh=MmRnaW9xa3U5d29h" className="p-2 rounded-3xl border-2">
                 <Instagram />
               </Link>
             </div>

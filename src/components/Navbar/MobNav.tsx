@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { Navlinks } from "./NavActions"
 import { Whatsapp, XTwitter } from "../../../public/customSvgs/Icons"
 import Image from "next/image"
-import Logo from '../logo.webp'
+import Logo from '../../logo.webp'
 import SideBar from "./SideBar"
 
 function MobNav() {
@@ -26,10 +26,9 @@ function MobNav() {
         </SheetHeader>
         <Navlinks classes="md:hidden flex flex-col  p-6 gap-2 md:p-0 h-[75%]"/>
       <SheetFooter className="bottom-10 flex justify-center flex-row">
-        <Link href='/' className="p-2 rounded-3xl border-2 border-white "><Whatsapp className="w-6 h-6"/></Link>
-        <Link href='/' className="p-2 rounded-3xl border-2 border-white flex items-center"><XTwitter/></Link>
-        <Link href='/' className="p-2 rounded-3xl border-2 border-white"><Mail /></Link>
-        <Link href='/' className="p-2 rounded-3xl border-2 border-white"><Instagram/></Link>
+        <Link href='https://wa.me/+966530773448?text=Hello%2C%20I%20am%20interested%20in%20your%20Products' className="p-2 rounded-3xl border-2 border-white "><Whatsapp className="w-6 h-6"/></Link>
+        <Link href='mailto:fonehouseofficial.fh@gmail.com' className="p-2 rounded-3xl border-2 border-white"><Mail /></Link>
+        <Link href='https://www.instagram.com/fonehouse_officials_ksa?igsh=MmRnaW9xa3U5d29h' className="p-2 rounded-3xl border-2 border-white"><Instagram/></Link>
       </SheetFooter>
       </SheetContent>
     </SideBar>

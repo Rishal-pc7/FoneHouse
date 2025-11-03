@@ -13,17 +13,15 @@ function ContactSection() {
               <h1 className="font-extrabold text-2xl md:text-3xl text-brandBlue">Get In Touch</h1>
               <h2 className="font-semibold text-lg md:text-xl text-white/80">Contact our team for quick support, questions, or service available every day by phone, WhatsApp, or email.</h2>
               <ul className='font-semibold text-lg md:text-xl text-white/80'>
-                <li>Phone: +966 5X XXX XXXX</li>
-                <li>Whatsapp: +966 5X XXX XXXX</li>
-                <li>Email: info@fonehouse.sa</li>
+                <li>Phone: +966 53 077 3448</li>
+                <li>Whatsapp: +966 53 077 3448</li>
+                <li>Email: fonehouseofficial.fh@gmail.com</li>
               </ul>
-              <h2 className="font-semibold text-lg md:text-xl text-white/80">Follow Us for Updates and Support:</h2>
-              <div className="flex py-2 gap-6 md:gap-4 justify-start  text-white/80">
-              <Link href="/" className="p-2 rounded-full border-2 border-white/80 flex items-center">
-                <XTwitter />
-              </Link>
-              <Link href="/" className="p-2 rounded-full border-2 border-white/80">
-                <Instagram />
+              <div className="">
+              
+              <Link href="https://www.instagram.com/fonehouse_officials_ksa?igsh=MmRnaW9xa3U5d29h" className="flex py-2 gap-6 md:gap-4 items-center h-10 justify-start  text-white/80">
+              <h2 className="font-semibold text-lg md:text-xl text-white/80">Follow Us On:</h2>
+                <Instagram className='hover:text-white/50'/>
               </Link>
             </div>
 
