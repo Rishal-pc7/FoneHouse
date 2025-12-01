@@ -12,12 +12,12 @@ A high-performance, interactive corporate website developed for **FoneHouse**, S
 ---
 
 ## 📖 Table of Contents
-- [About the Project](#about-the-project)
-- [Key Features](#key-features)
-- [Technologies Used](#technologies-used)
-- [Deployment](#deployment)
-- [Author](#author)
-- [License](#license--ownership)
+- About the Project
+- Key Features
+- Technologies Used
+- Deployment
+- Author
+- License
 
 ---
 
@@ -65,7 +65,7 @@ The production build is deployed and live.
 
 * **Role:** Freelance Front-End Developer
 * **Focus:** React.js, Tailwind CSS, and Modern Web UI
-* **LinkedIn:** [Link to your LinkedIn profile]
+* **[LinkedIn](https://www.linkedin.com/in/rishal-p/)**
 
 ---
 
@@ -79,3 +79,4 @@ This software is the proprietary intellectual property of **FoneHouse**.
 * **Purpose:** This repository serves as a codebase for maintenance, version control, and the developer's professional portfolio.
 
 ---
+*Verified and Deployed for FoneHouse (Riyadh, KSA).*
