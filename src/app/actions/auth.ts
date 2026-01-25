@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export async function login(currentState: any, formData: FormData) {
+export async function login(prevState: any, formData: FormData) {
   const username = formData.get('username')
   const password = formData.get('password')
 
@@ -17,7 +17,7 @@ export async function login(currentState: any, formData: FormData) {
       maxAge: 60 * 60 * 24 * 7, // 1 week
       path: '/',
     })
-    
+
     redirect('/admin')
   }
 

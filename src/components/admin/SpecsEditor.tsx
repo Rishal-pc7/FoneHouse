@@ -1,19 +1,27 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Plus, Trash2, List, Grid, AlertCircle, X } from 'lucide-react';
+import { Plus, Trash2, List, Grid, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Define strict types for the data structures
+export type SpecObjectRow = { key: string; value: string };
+export type SpecArrayRow = string;
+export type SpecsData = Record<string, string> | string[];
+
 interface Props {
-    onChange: (json: any) => void;
-    initialData?: any;
+    onChange: (data: SpecsData | undefined) => void;
+    initialData?: SpecsData | null;
 }
 
 export default function SpecsEditor({ onChange, initialData }: Props) {
     const [mode, setMode] = useState<'object' | 'array'>('object');
-    const [rows, setRows] = useState<{ key: string; value: string }[] | string[]>([
+
+    // Union type for rows state
+    const [rows, setRows] = useState<SpecObjectRow[] | SpecArrayRow[]>([
         { key: '', value: '' }
     ]);
+
     const [showModal, setShowModal] = useState(false);
     const [pendingMode, setPendingMode] = useState<'object' | 'array'>('object');
 
@@ -24,7 +32,8 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                 setRows(initialData);
             } else {
                 setMode('object');
-                const objRows = Object.entries(initialData).map(([key, value]) => ({
+                // Ensure values are strings
+                const objRows: SpecObjectRow[] = Object.entries(initialData).map(([key, value]) => ({
                     key,
                     value: String(value)
                 }));
@@ -34,9 +43,14 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
     }, [initialData]);
 
     const switchMode = (newMode: 'object' | 'array') => {
-        const hasData = rows.length > 0 && rows.some(row =>
-            typeof row === 'string' ? row.trim() !== '' : row.key.trim() !== '' || row.value.trim() !== ''
-        );
+        // Type check rows before accessing properties
+        const hasData = rows.length > 0 && rows.some(row => {
+            if (typeof row === 'string') {
+                return row.trim() !== '';
+            } else {
+                return (row as SpecObjectRow).key.trim() !== '' || (row as SpecObjectRow).value.trim() !== '';
+            }
+        });
 
         if (hasData) {
             setPendingMode(newMode);
@@ -49,53 +63,66 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
     const confirmModeSwitch = (newMode: 'object' | 'array') => {
         setMode(newMode);
         setRows(newMode === 'array' ? [''] : [{ key: '', value: '' }]);
-        onChange(null);
+        onChange(undefined);
         setShowModal(false);
     };
 
     const addRow = () => {
         if (mode === 'array') {
-            setRows([...rows as string[], '']);
+            setRows([...(rows as SpecArrayRow[]), '']);
         } else {
-            setRows([...rows as any[], { key: '', value: '' }]);
+            setRows([...(rows as SpecObjectRow[]), { key: '', value: '' }]);
         }
     };
 
     const removeRow = (index: number) => {
-        const newRows = rows.filter((_, i) => i !== index);
-        setRows(newRows as typeof rows);
-        updateOutput(newRows);
-    };
-
-    const updateRow = (index: number, field: string, text: string) => {
-        const newRows = [...rows];
         if (mode === 'array') {
-            (newRows as string[])[index] = text;
+            const newRows = (rows as SpecArrayRow[]).filter((_, i) => i !== index);
+            setRows(newRows);
+            updateOutput(newRows);
         } else {
-            ((newRows as any[])[index])[field] = text;
+            const newRows = (rows as SpecObjectRow[]).filter((_, i) => i !== index);
+            setRows(newRows);
+            updateOutput(newRows);
         }
-        setRows(newRows as typeof rows);
-        updateOutput(newRows);
     };
 
-    const updateOutput = (updatedRows: any) => {
+    const updateRow = (index: number, field: 'key' | 'value', text: string) => {
         if (mode === 'array') {
-            const output = (updatedRows as string[]).filter(v => v.trim() !== '');
-            onChange(output.length ? output : null);
+            const newRows = [...(rows as SpecArrayRow[])];
+            newRows[index] = text;
+            setRows(newRows);
+            updateOutput(newRows);
         } else {
-            const output = (updatedRows as any[]).reduce((acc, row) => {
+            const newRows = [...(rows as SpecObjectRow[])];
+            if (field === 'key') {
+                newRows[index] = { ...newRows[index], key: text };
+            } else if (field === 'value') {
+                newRows[index] = { ...newRows[index], value: text };
+            }
+            setRows(newRows);
+            updateOutput(newRows);
+        }
+    };
+
+    const updateOutput = (updatedRows: SpecObjectRow[] | SpecArrayRow[]) => {
+        if (mode === 'array') {
+            const output = (updatedRows as SpecArrayRow[]).filter(v => v.trim() !== '');
+            onChange(output.length ? output : undefined);
+        } else {
+            const output = (updatedRows as SpecObjectRow[]).reduce((acc, row) => {
                 if (row.key.trim()) acc[row.key] = row.value;
                 return acc;
             }, {} as Record<string, string>);
-            onChange(Object.keys(output).length ? output : null);
+            onChange(Object.keys(output).length ? output : undefined);
         }
     };
 
-    const getPreviewData = () => {
+    const getPreviewData = (): SpecsData => {
         if (mode === 'array') {
-            return (rows as string[]).filter(v => v.trim() !== '');
+            return (rows as SpecArrayRow[]).filter(v => v.trim() !== '');
         } else {
-            return (rows as any[]).reduce((acc, row) => {
+            return (rows as SpecObjectRow[]).reduce((acc, row) => {
                 if (row.key.trim()) acc[row.key] = row.value;
                 return acc;
             }, {} as Record<string, string>);
@@ -113,8 +140,8 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                         type="button"
                         onClick={() => switchMode('object')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'object'
-                                ? 'bg-white dark:bg-zinc-700 text-brandBlue shadow-sm'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-zinc-700 text-brandBlue shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                             }`}
                     >
                         <Grid size={16} /> Key-Value Pairs
@@ -123,8 +150,8 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                         type="button"
                         onClick={() => switchMode('array')}
                         className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${mode === 'array'
-                                ? 'bg-white dark:bg-zinc-700 text-brandBlue shadow-sm'
-                                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                            ? 'bg-white dark:bg-zinc-700 text-brandBlue shadow-sm'
+                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                             }`}
                     >
                         <List size={16} /> Bullet Points
@@ -152,7 +179,7 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                                         type="text"
                                         placeholder="Feature (e.g. Processor)"
                                         className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none text-sm transition-all"
-                                        value={(row as any).key}
+                                        value={(row as SpecObjectRow).key}
                                         onChange={(e) => updateRow(index, 'key', e.target.value)}
                                     />
                                 )}
@@ -160,7 +187,7 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                                     type="text"
                                     placeholder={mode === 'object' ? 'Value (e.g. A16 Bionic)' : 'Feature description...'}
                                     className="flex-[2] px-4 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-gray-50 dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none text-sm transition-all"
-                                    value={mode === 'array' ? (row as string) : (row as Record<string, string>).value}
+                                    value={mode === 'array' ? (row as SpecArrayRow) : (row as SpecObjectRow).value}
                                     onChange={(e) => updateRow(index, 'value', e.target.value)}
                                 />
 
@@ -191,9 +218,9 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                 <label className="block text-xs font-bold uppercase tracking-wider mb-3 text-gray-500 dark:text-gray-400">Live Preview</label>
                 <div className="prose dark:prose-invert max-w-none text-sm">
                     {mode === 'object' ? (
-                        Object.keys(previewData).length > 0 ? (
+                        Object.keys(previewData as Record<string, string>).length > 0 ? (
                             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
-                                {Object.entries(previewData).map(([key, value]) => (
+                                {Object.entries(previewData as Record<string, string>).map(([key, value]) => (
                                     <div key={key} className="flex flex-col sm:flex-row sm:justify-between border-b border-gray-100 dark:border-zinc-700 pb-1">
                                         <dt className="font-medium text-gray-700 dark:text-gray-300">{key}</dt>
                                         <dd className="text-gray-500 dark:text-gray-400 text-right">{String(value)}</dd>
@@ -204,9 +231,9 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                             <p className="text-gray-400 italic">Add specifications to see them here...</p>
                         )
                     ) : (
-                        (previewData as string[]).length > 0 ? (
+                        (previewData as SpecArrayRow[]).length > 0 ? (
                             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                                {(previewData as string[]).map((item, idx) => (
+                                {(previewData as SpecArrayRow[]).map((item, idx) => (
                                     <li key={idx}>{item}</li>
                                 ))}
                             </ul>
