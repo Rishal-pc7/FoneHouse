@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FoneHouse - Official Corporate Website
 
-## Getting Started
+![Project Status](https://img.shields.io/badge/status-live-brightgreen)
+![Next.js](https://img.shields.io/badge/Next.js-black?style=flat&logo=next.js&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=flat&logo=framer&logoColor=white)
 
-First, run the development server:
+A high-performance, interactive corporate website developed for **FoneHouse**, Saudi Arabia’s leading destination for retail and wholesale mobile sales, expert repairs, and genuine accessories.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Live Demo:** [https://www.fonehouseofficial.com/](https://www.fonehouseofficial.com/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📖 Table of Contents
+- About the Project
+- Key Features
+- Technologies Used
+- Deployment
+- Author
+- License
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🏗 About the Project
 
-To learn more about Next.js, take a look at the following resources:
+This project was developed as a freelance commission to establish a digital footprint for **FoneHouse** in the Saudi Arabian market. The goal was to create a modern, fast, and visually engaging platform that reflects their status as a market leader in mobile solutions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The platform serves three main business verticals:
+* **Retail & Wholesale:** Showcasing the latest mobile devices and bulk purchase options.
+* **Expert Repairs:** Highlighting their professional maintenance services.
+* **Genuine Accessories:** Cataloging high-quality mobile add-ons.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✨ Key Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **High Performance:** Built with **Next.js** for server-side rendering (SSR) and optimal SEO ranking.
+* **Immersive Animations:** Utilizes **Framer Motion** for smooth page transitions, scroll reveals, and interactive elements.
+* **Modern UI Components:** Designed using **Shadcn UI** for accessible, robust, and clean interface components.
+* **Backend Communication:** Integrated **Nodemailer** to handle contact forms and business inquiries directly from the server side without third-party email services.
+* **Responsive Design:** Fully fluid layout powered by Tailwind CSS ensuring compatibility across all mobile and desktop devices.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🛠 Technologies Used
+
+* **[Next.js](https://nextjs.org/):** The React Framework for the web (App Router).
+* **[Tailwind CSS](https://tailwindcss.com/):** Utility-first CSS framework for styling.
+* **[Shadcn UI](https://ui.shadcn.com/):** Re-usable components built using Radix UI and Tailwind CSS.
+* **[Framer Motion](https://www.framer.com/motion/):** Production-ready motion library for React.
+* **[Nodemailer](https://nodemailer.com/):** Module for sending emails from the Next.js API routes.
+* **[Lucide React](https://lucide.dev/):** Beautiful & consistent icons.
+
+---
+
+## 🚀 Deployment
+
+The production build is deployed and live.
+
+* **Live URL:** [https://www.fonehouseofficial.com/](https://www.fonehouseofficial.com/)
+* **Hosting:** Vercel
+## 👤 Author
+
+**Designed & Developed by [Your Name]**
+
+* **Role:** Freelance Front-End Developer
+* **Focus:** React.js, Tailwind CSS, and Modern Web UI
+* **[LinkedIn](https://www.linkedin.com/in/rishal-p/)**
+
+---
+
+## 📄 License & Ownership
+
+**© 2025 FoneHouse. All Rights Reserved.**
+
+This software is the proprietary intellectual property of **FoneHouse**.
+* **Ownership:** The source code, design assets, and intellectual property belong to the client (FoneHouse).
+* **Usage:** This code was developed as a freelance commission. Unauthorized copying, modification, distribution, or use for other commercial purposes is strictly prohibited.
+* **Purpose:** This repository serves as a codebase for maintenance, version control, and the developer's professional portfolio.
+
+---
+*Verified and Deployed for FoneHouse (Riyadh, KSA).*
