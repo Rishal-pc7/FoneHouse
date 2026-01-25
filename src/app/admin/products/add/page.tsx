@@ -16,8 +16,9 @@ const productSchema = z.object({
     category: z.string().min(1, 'Category is required'),
     brand: z.string().min(1, 'Brand is required'),
     stock: z.number().int().min(0, 'Stock cannot be negative'),
+    isInStock: z.boolean(),
     imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
-    specs: z.union([z.record(z.string(),z.string()), z.array(z.string())]).optional(),
+    specs: z.union([z.record(z.string(), z.string()), z.array(z.string())]).optional(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
@@ -31,6 +32,9 @@ export default function AddProductPage() {
         reset
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
+        defaultValues: {
+            isInStock: true
+        }
     })
 
     const onSubmit = async (data: ProductFormData) => {
@@ -111,13 +115,26 @@ export default function AddProductPage() {
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Stock Quantity
                             </label>
-                            <input
-                                type="number"
-                                {...register('stock', { valueAsNumber: true })}
-                                className={`w-full px-4 py-3 rounded-lg border ${errors.stock ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                    } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                                placeholder="0"
-                            />
+                            <div className="space-y-3">
+                                <input
+                                    type="number"
+                                    {...register('stock', { valueAsNumber: true })}
+                                    className={`w-full px-4 py-3 rounded-lg border ${errors.stock ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                        } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
+                                    placeholder="0"
+                                />
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        id="isInStock"
+                                        {...register('isInStock')}
+                                        className="w-4 h-4 text-brandBlue border-gray-300 rounded focus:ring-brandBlue dark:border-zinc-700 dark:bg-zinc-800"
+                                    />
+                                    <label htmlFor="isInStock" className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                                        Mark as In Stock
+                                    </label>
+                                </div>
+                            </div>
                             {errors.stock && (
                                 <p className="text-red-500 text-sm mt-1">{errors.stock.message}</p>
                             )}
