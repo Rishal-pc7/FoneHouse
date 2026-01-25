@@ -1,23 +1,24 @@
 import type { Metadata } from "next";
-import { Manrope,Urbanist } from "next/font/google";
+import { Manrope, Urbanist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import { CartProvider } from "@/context/CartContext";
 
 
 const manrope = Manrope({
   variable: "--font-manrope",
-  weight: ['400', '500', '600','700'],
-  subsets:['latin'] 
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin']
 });
 const urbanist = Urbanist({
   variable: "--font-urbanist",
-  weight: ['400', '500', '600','700',"800"],
-  subsets:['latin'] 
+  weight: ['400', '500', '600', '700', "800"],
+  subsets: ['latin']
 });
 
 export const metadata: Metadata = {
-  icons:{
+  icons: {
     icon: '/logo.jpg',
   },
   title: "FoneHouse",
@@ -33,10 +34,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${manrope.variable} ${urbanist.variable} relative font-manrope dark antialiased`}>
-        <Navbar/>
-        {children}
-        {/* <WhatsappButton/> */}
-        <Footer/>
+        <CartProvider>
+          <Navbar />
+          {children}
+          {/* <WhatsappButton/> */}
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
