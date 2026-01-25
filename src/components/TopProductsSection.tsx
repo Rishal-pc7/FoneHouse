@@ -25,7 +25,7 @@ const topProducts: Product[] = [
         description: 'Titanium design, A17 Pro chip, 48MP Main camera.',
         price: 4999.00,
         category: 'Mobile Phones',
-        imageUrl: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=800&auto=format&fit=crop',
+        imageUrl: '',
         isNew: true
     },
     {
