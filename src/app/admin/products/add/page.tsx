@@ -30,7 +30,8 @@ export default function AddProductPage() {
         handleSubmit,
         control,
         formState: { errors, isSubmitting },
-        reset
+        reset,
+        watch
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: {
@@ -210,6 +211,22 @@ export default function AddProductPage() {
                             />
                             <Upload className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
                         </div>
+
+                        {/* Image Preview */}
+                        {
+                            watch('img') && (
+                                <div className="mt-4 relative aspect-video w-full overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-700">
+                                    <img
+                                        src={watch('img') || ''}
+                                        alt="Product preview"
+                                        className="object-cover w-full h-full"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none'
+                                        }}
+                                    />
+                                </div>
+                            )
+                        }
 
                         {errors.img && (
                             <p className="text-red-500 text-sm mt-1">{errors.img.message}</p>

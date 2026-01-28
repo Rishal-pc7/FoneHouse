@@ -6,7 +6,8 @@ import * as z from 'zod'
 import { motion } from 'framer-motion'
 import { Upload } from 'lucide-react'
 import SpecsEditor from '@/components/admin/SpecsEditor'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 // Define the validation schema
 const productSchema = z.object({
@@ -25,12 +26,16 @@ type ProductFormData = z.infer<typeof productSchema>
 
 export default function EditProductPage() {
     const router = useRouter()
+    const params = useParams()
+    const id = params.id as string
+    const [product, setProduct] = useState<ProductFormData | null>(null)
     const {
         register,
         handleSubmit,
         control,
         formState: { errors, isSubmitting },
-        reset
+        reset,
+        watch
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: {
@@ -38,9 +43,37 @@ export default function EditProductPage() {
         }
     })
 
+    useEffect(() => {
+        if (id) {
+            const fetchProduct = async () => {
+                try {
+                    const response = await fetch(`/api/updateProduct/${id}`)
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch product")
+                    }
+                    const data = await response.json()
+                    // Use reset to populate the form
+                    reset(data.data)
+                } catch (error) {
+                    console.error("Error fetching product:", error)
+                }
+            }
+            fetchProduct()
+        }
+    }, [id, reset])
+
     const onSubmit = async (data: ProductFormData) => {
-        // Placeholder for edit submission
-        console.log("Edit data:", data)
+        const response = await fetch(`/api/updateProduct/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+            throw new Error("Failed to update product")
+        }
+        router.push("/admin/products")
     }
 
     return (
@@ -193,6 +226,23 @@ export default function EditProductPage() {
                             />
                             <Upload className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
                         </div>
+
+                        {/* Image Preview */}
+                        {
+                            watch('img') && (
+                                <div className="mt-4 relative aspect-video w-full overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-700">
+                                    <img
+                                        src={watch('img') || ''}
+                                        alt="Product preview"
+                                        className="object-cover w-full h-full"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none'
+                                        }}
+                                    />
+                                </div>
+                            )
+                        }
+
 
                         {errors.img && (
                             <p className="text-red-500 text-sm mt-1">{errors.img.message}</p>
