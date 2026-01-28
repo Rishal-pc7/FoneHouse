@@ -1,29 +1,30 @@
 'use client'
 
-import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { motion } from 'framer-motion'
 import { Upload } from 'lucide-react'
 import SpecsEditor from '@/components/admin/SpecsEditor'
+import { useRouter } from 'next/navigation'
 
 // Define the validation schema
 const productSchema = z.object({
     name: z.string().min(1, 'Product name is required'),
-    description: z.string().min(10, 'Description must be at least 10 characters'),
+    description: z.string().min(10, 'Description must be at least 10 characters').optional(),
     price: z.number().min(0.01, 'Price must be greater than 0'),
     category: z.string().min(1, 'Category is required'),
     brand: z.string().min(1, 'Brand is required'),
     stock: z.number().int().min(0, 'Stock cannot be negative'),
     isInStock: z.boolean(),
-    imageUrl: z.string().url('Invalid image URL').optional().or(z.literal('')),
-    specs: z.union([z.record(z.string(), z.string()), z.array(z.string())]).optional(),
+    img: z.string().url('Invalid image URL').optional().or(z.literal('')),
+    specifications: z.union([z.record(z.string(), z.string()), z.array(z.string())]).optional(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
 
 export default function AddProductPage() {
+    const router=useRouter()
     const {
         register,
         handleSubmit,
@@ -38,11 +39,25 @@ export default function AddProductPage() {
     })
 
     const onSubmit = async (data: ProductFormData) => {
-        // Simulate API call
-        console.log('Submitting Product:', data)
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        alert('Product added successfully!')
-        reset()
+        try{
+            const validatedData=productSchema.parse(data)
+            const response=await fetch("/api/addProduct",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify(validatedData)
+            })
+            if(!response.ok){
+                throw new Error("Failed to add product")
+            }
+            reset()
+            router.push("/admin/products")
+
+        }catch(error){
+            console.log(error)
+        }
+        
     }
 
     return (
@@ -152,10 +167,9 @@ export default function AddProductPage() {
                                     } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all appearance-none`}
                             >
                                 <option value="">Select Category</option>
-                                <option value="phones">Mobile Phones</option>
+                                <option value="mobilePhones">Mobile Phones</option>
                                 <option value="accessories">Accessories</option>
-                                <option value="parts">Spare Parts</option>
-                                <option value="maintenance">Maintenance Service</option>
+                                <option value="spareParts">Spare Parts</option>
                             </select>
                             {errors.category && (
                                 <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
@@ -188,16 +202,16 @@ export default function AddProductPage() {
                         </label>
                         <div className="relative">
                             <input
-                                {...register('imageUrl')}
-                                className={`w-full px-4 py-3 pl-10 rounded-lg border ${errors.imageUrl ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                {...register('img')}
+                                className={`w-full px-4 py-3 pl-10 rounded-lg border ${errors.img ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
                                     } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
                                 placeholder="https://example.com/image.jpg"
                             />
                             <Upload className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
                         </div>
 
-                        {errors.imageUrl && (
-                            <p className="text-red-500 text-sm mt-1">{errors.imageUrl.message}</p>
+                        {errors.img && (
+                            <p className="text-red-500 text-sm mt-1">{errors.img.message}</p>
                         )}
                     </div>
                 </div>
@@ -206,7 +220,7 @@ export default function AddProductPage() {
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">Specifications</h2>
                     <div className="bg-gray-50 dark:bg-zinc-800/30 p-6 rounded-2xl border border-gray-100 dark:border-zinc-800">
                         <Controller
-                            name="specs"
+                            name="specifications"
                             control={control}
                             render={({ field }) => (
                                 <SpecsEditor

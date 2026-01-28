@@ -1,63 +1,32 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
+import AddToCartButton from './AddToCartButton';
+import prisma from '@/lib/db';
+import { JsonValue } from '@prisma/client/runtime/client';
 
 interface Product {
-    id: string;
+    id: number;
     name: string;
     description: string;
     price: number;
     category: string;
-    imageUrl: string;
+    img: string;
     isNew?: boolean;
+    created_at: Date;
+    specifications: JsonValue;
 }
 
-const topProducts: Product[] = [
-    {
-        id: '1',
-        name: 'iPhone 15 Pro Max',
-        description: 'Titanium design, A17 Pro chip, 48MP Main camera.',
-        price: 4999.00,
-        category: 'Mobile Phones',
-        imageUrl: '',
-        isNew: true
-    },
-    {
-        id: '2',
-        name: 'Samsung Galaxy S24 Ultra',
-        description: 'Galaxy AI is here. Epic titanium build.',
-        price: 4599.00,
-        category: 'Mobile Phones',
-        imageUrl: 'https://images.unsplash.com/photo-1706020586940-0235b866c116?q=80&w=800&auto=format&fit=crop',
-        isNew: true
-    },
-    {
-        id: '3',
-        name: 'AirPods Pro (2nd Gen)',
-        description: 'Rich audio. Next-level Active Noise Cancellation.',
-        price: 949.00,
-        category: 'Accessories',
-        imageUrl: 'https://images.unsplash.com/photo-1603351154351-5cf23c6def4d?q=80&w=800&auto=format&fit=crop'
-    },
-    {
-        id: '7',
-        name: 'Apple Watch Ultra 2',
-        description: 'The most rugged and capable Apple Watch yet.',
-        price: 3199.00,
-        category: 'Wearables',
-        imageUrl: 'https://images.unsplash.com/photo-1696009893540-0d67f10b7410?q=80&w=800&auto=format&fit=crop',
-        isNew: true
-    }
-];
 
-export default function TopProductsSection() {
-    const { addToCart } = useCart();
+export default async function TopProductsSection() {
+    const topProducts: Product[] = await prisma.products.findMany({
+        take: 4,
+        orderBy: {
+            created_at: 'desc',
+        },
+    });
     return (
         <section className="py-20 md:py-28 bg-gray-50 dark:bg-zinc-950">
             <div className="w-full px-4 md:px-10 max-w-[1440px] mx-auto">
@@ -78,11 +47,11 @@ export default function TopProductsSection() {
                 {/* Grid: 2 columns on mobile (smaller items), 4 on desktop */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
                     {topProducts.map((product) => (
-                        <Card key={product.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900">
+                        <Card key={product.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900 py-0 gap-0">
                             {/* Image Container */}
                             <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-zinc-800">
                                 <Image
-                                    src={product.imageUrl}
+                                    src={product.img}
                                     alt={product.name}
                                     fill
                                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -114,14 +83,7 @@ export default function TopProductsSection() {
                                 <div className="text-sm md:text-xl font-bold text-gray-900 dark:text-white">
                                     SAR {product.price.toLocaleString()}
                                 </div>
-                                <Button
-                                    size="sm"
-                                    className="h-7 w-7 md:h-9 md:w-auto p-0 md:px-4 rounded-full shadow-md hover:scale-105 transition-transform bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 flex items-center justify-center"
-                                    onClick={addToCart}
-                                >
-                                    <ShoppingCart size={14} className="md:mr-2" />
-                                    <span className="hidden md:inline">Add</span>
-                                </Button>
+                                <AddToCartButton />
                             </CardFooter>
                         </Card>
                     ))}
