@@ -5,16 +5,18 @@ import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import AddToCartButton from './AddToCartButton';
 import prisma from '@/lib/db';
-import { JsonValue } from '@prisma/client/runtime/client';
+import { Decimal, JsonValue } from '@prisma/client/runtime/client';
 
 interface Product {
     id: number;
     name: string;
-    description: string;
-    price: number;
+    description: string|null;
+    price: Decimal;
+    brand: string;
+    stock: number;
+    isInStock: boolean;
     category: string;
     img: string;
-    isNew?: boolean;
     created_at: Date;
     specifications: JsonValue;
 }
@@ -57,11 +59,7 @@ export default async function TopProductsSection() {
                                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
                                 />
-                                {product.isNew && (
-                                    <span className="absolute top-2 right-2 md:top-3 md:right-3 bg-brandBlue text-white text-[10px] md:text-xs font-bold px-1.5 py-0.5 md:px-2 md:py-1 rounded-full shadow-lg">
-                                        NEW
-                                    </span>
-                                )}
+
                             </div>
 
                             <CardHeader className="p-3 md:p-5 pb-0 md:pb-2">
@@ -81,7 +79,7 @@ export default async function TopProductsSection() {
 
                             <CardFooter className="p-3 md:p-5 pt-0 md:pt-0 flex items-center justify-between mt-auto">
                                 <div className="text-sm md:text-xl font-bold text-gray-900 dark:text-white">
-                                    SAR {product.price.toLocaleString()}
+                                    SAR {new Intl.NumberFormat('en-SA').format(product.price.toNumber())}
                                 </div>
                                 <AddToCartButton />
                             </CardFooter>
