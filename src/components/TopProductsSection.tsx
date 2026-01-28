@@ -10,7 +10,7 @@ import { Decimal, JsonValue } from '@prisma/client/runtime/client';
 interface Product {
     id: number;
     name: string;
-    description: string|null;
+    description: string | null;
     price: Decimal;
     brand: string;
     stock: number;
@@ -48,43 +48,54 @@ export default async function TopProductsSection() {
 
                 {/* Grid: 2 columns on mobile (smaller items), 4 on desktop */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-                    {topProducts.map((product) => (
-                        <Card key={product.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900 py-0 gap-0">
-                            {/* Image Container */}
-                            <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-zinc-800">
-                                <Image
-                                    src={product.img}
-                                    alt={product.name}
-                                    fill
-                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
-                                />
+                    {topProducts.map((product) => {
+                        const isOutOfStock = !product.isInStock || product.stock <= 0;
+                        return (
+                            <Card key={product.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900 py-0 gap-0">
+                                {/* Image Container */}
+                                <Link href={`/shop/${product.id}`} className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-zinc-800 block">
+                                    <Image
+                                        src={product.img}
+                                        alt={product.name}
+                                        fill
+                                        className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-80' : ''}`}
+                                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 25vw"
+                                    />
+                                    {isOutOfStock && (
+                                        <div className="absolute top-2 right-2 bg-red-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full shadow-md">
+                                            Out of Stock
+                                        </div>
+                                    )}
+                                </Link>
 
-                            </div>
+                                <CardHeader className="p-3 md:p-5 pb-0 md:pb-2">
+                                    <Link href={`/shop/${product.id}`}>
+                                        <div className="text-[10px] md:text-xs font-medium text-brandBlue mb-1 uppercase tracking-wider">
+                                            {product.category}
+                                        </div>
+                                        <CardTitle className="text-sm md:text-lg line-clamp-1 group-hover:text-brandBlue transition-colors">
+                                            {product.name}
+                                        </CardTitle>
+                                    </Link>
+                                </CardHeader>
 
-                            <CardHeader className="p-3 md:p-5 pb-0 md:pb-2">
-                                <div className="text-[10px] md:text-xs font-medium text-brandBlue mb-1 uppercase tracking-wider">
-                                    {product.category}
-                                </div>
-                                <CardTitle className="text-sm md:text-lg line-clamp-1 group-hover:text-brandBlue transition-colors">
-                                    {product.name}
-                                </CardTitle>
-                            </CardHeader>
+                                <CardContent className="p-3 md:p-5 pt-0 md:pt-0 grow">
+                                    <Link href={`/shop/${product.id}`}>
+                                        <CardDescription className="line-clamp-2 text-xs md:text-sm">
+                                            {product.description}
+                                        </CardDescription>
+                                    </Link>
+                                </CardContent>
 
-                            <CardContent className="p-3 md:p-5 pt-0 md:pt-0 grow">
-                                <CardDescription className="line-clamp-2 text-xs md:text-sm">
-                                    {product.description}
-                                </CardDescription>
-                            </CardContent>
-
-                            <CardFooter className="p-3 md:p-5 pt-0 md:pt-0 flex items-center justify-between mt-auto">
-                                <div className="text-sm md:text-xl font-bold text-gray-900 dark:text-white">
-                                    SAR {new Intl.NumberFormat('en-SA').format(product.price.toNumber())}
-                                </div>
-                                <AddToCartButton />
-                            </CardFooter>
-                        </Card>
-                    ))}
+                                <CardFooter className="p-3 md:p-5 pt-0 md:pt-0 flex items-center justify-between mt-auto">
+                                    <div className="text-sm md:text-xl font-bold text-gray-900 dark:text-white">
+                                        SAR {new Intl.NumberFormat('en-SA').format(product.price.toNumber())}
+                                    </div>
+                                    <AddToCartButton disabled={isOutOfStock} />
+                                </CardFooter>
+                            </Card>
+                        )
+                    })}
                 </div>
 
                 <div className="mt-8 text-center md:hidden">

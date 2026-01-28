@@ -23,7 +23,7 @@ const productSchema = z.object({
 
 type ProductFormData = z.infer<typeof productSchema>
 
-export default function AddProductPage() {
+export default function EditProductPage() {
     const router = useRouter()
     const {
         register,
@@ -39,33 +39,16 @@ export default function AddProductPage() {
     })
 
     const onSubmit = async (data: ProductFormData) => {
-        try {
-            const validatedData = productSchema.parse(data)
-            const response = await fetch("/api/addProduct", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(validatedData)
-            })
-            if (!response.ok) {
-                throw new Error("Failed to add product")
-            }
-            reset()
-            router.push("/admin/products")
-
-        } catch (error) {
-            console.log(error)
-        }
-
+        // Placeholder for edit submission
+        console.log("Edit data:", data)
     }
 
     return (
         <div className="max-w-2xl mx-auto">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Add New Product</h1>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Edit Product</h1>
                 <p className="text-gray-500 dark:text-gray-400 mt-2">
-                    Create a new product listing for your store.
+                    Update product details and inventory.
                 </p>
             </div>
 
@@ -242,10 +225,10 @@ export default function AddProductPage() {
                         {isSubmitting ? (
                             <>
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span>Saving Product...</span>
+                                <span>Updating Product...</span>
                             </>
                         ) : (
-                            'Save Product'
+                            'Update Product'
                         )}
                     </button>
                 </div>

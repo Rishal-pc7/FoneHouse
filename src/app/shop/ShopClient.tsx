@@ -65,51 +65,67 @@ export default function ShopClient({ products }: ShopClientProps) {
 
                 {/* Product Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {products.map((product) => (
-                        <Link href={`/shop/${product.id}`} key={product.id} className="block h-full">
-                            <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900 py-0 gap-0">
-                                {/* Image Container with Hover Effect */}
-                                <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-zinc-800">
-                                    <Image
-                                        src={product.img} // Updated to match DB schema
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    />
-
-                                </div>
-
-                                <CardHeader className="p-5 pb-2">
-                                    <div className="text-xs font-medium text-brandBlue mb-1 uppercase tracking-wider">
-                                        {product.category}
+                    {products.map((product) => {
+                        const isOutOfStock = !product.isInStock || product.stock <= 0;
+                        return (
+                            <Link href={`/shop/${product.id}`} key={product.id} className="block h-full">
+                                <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-gray-200 dark:border-zinc-800 flex flex-col h-full bg-white dark:bg-zinc-900 py-0 gap-0">
+                                    {/* Image Container with Hover Effect */}
+                                    <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-zinc-800">
+                                        <Image
+                                            src={product.img} // Updated to match DB schema
+                                            alt={product.name}
+                                            fill
+                                            className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-80' : ''}`}
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        />
+                                        {isOutOfStock && (
+                                            <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md z-10">
+                                                Out of Stock
+                                            </div>
+                                        )}
                                     </div>
-                                    <CardTitle className="text-lg line-clamp-1 group-hover:text-brandBlue transition-colors">
-                                        {product.name}
-                                    </CardTitle>
-                                </CardHeader>
 
-                                <CardContent className="p-5 pt-0 grow">
-                                    <CardDescription className="line-clamp-2 text-sm">
-                                        {product.description}
-                                    </CardDescription>
-                                </CardContent>
+                                    <CardHeader className="p-5 pb-2">
+                                        <div className="text-xs font-medium text-brandBlue mb-1 uppercase tracking-wider">
+                                            {product.category}
+                                        </div>
+                                        <CardTitle className="text-lg line-clamp-1 group-hover:text-brandBlue transition-colors">
+                                            {product.name}
+                                        </CardTitle>
+                                    </CardHeader>
 
-                                <CardFooter className="p-5 pt-0 flex items-center justify-between mt-auto">
-                                    <div className="text-xl font-bold text-gray-900 dark:text-white">
-                                        SAR <span>{new Intl.NumberFormat('en-SA').format(product.price)}</span>
-                                    </div>
-                                    <Button size="sm" className="rounded-full shadow-md hover:scale-105 transition-transform bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200" onClick={(e) => {
-                                        e.preventDefault();
-                                        addToCart();
-                                    }}>
-                                        <ShoppingCart size={16} className="mr-2" />
-                                        Add
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        </Link>
-                    ))}
+                                    <CardContent className="p-5 pt-0 grow">
+                                        <CardDescription className="line-clamp-2 text-sm">
+                                            {product.description}
+                                        </CardDescription>
+                                    </CardContent>
+
+                                    <CardFooter className="p-5 pt-0 flex items-center justify-between mt-auto">
+                                        <div className="text-xl font-bold text-gray-900 dark:text-white">
+                                            SAR <span>{new Intl.NumberFormat('en-SA').format(product.price)}</span>
+                                        </div>
+                                        <Button
+                                            size="sm"
+                                            disabled={isOutOfStock}
+                                            className={`rounded-full shadow-md transition-transform
+                                            ${isOutOfStock
+                                                    ? 'bg-gray-400 cursor-not-allowed shadow-none'
+                                                    : 'bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 hover:scale-105'
+                                                }`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (!isOutOfStock) addToCart();
+                                            }}
+                                        >
+                                            <ShoppingCart size={16} className="mr-2" />
+                                            {isOutOfStock ? 'Sold Out' : 'Add'}
+                                        </Button>
+                                    </CardFooter>
+                                </Card>
+                            </Link>
+                        )
+                    })}
                 </div>
             </div>
         </main>

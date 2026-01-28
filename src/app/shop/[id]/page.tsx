@@ -16,6 +16,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         notFound();
     }
 
+    const isOutOfStock = !product.isInStock || product.stock <= 0;
+
     return (
         <main className="min-h-screen bg-white dark:bg-zinc-950 pb-20">
             {/* Breadcrumb / Back Navigation */}
@@ -36,11 +38,15 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                                 src={product.img}
                                 alt={product.name}
                                 fill
-                                className="object-cover hover:scale-105 transition-transform duration-700"
+                                className={`object-cover hover:scale-105 transition-transform duration-700 ${isOutOfStock ? 'grayscale opacity-80' : ''}`}
                                 priority
                                 sizes="(max-width: 768px) 100vw, 50vw"
                             />
-
+                            {isOutOfStock && (
+                                <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">
+                                    Out of Stock
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -73,7 +79,11 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                                 <span className="text-4xl font-bold text-gray-900 dark:text-white">
                                     SAR {new Intl.NumberFormat('en-SA').format(product.price.toNumber())}
                                 </span>
-
+                                {isOutOfStock && (
+                                    <span className="text-red-500 font-medium text-lg mb-1">
+                                        Sold Out
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -126,7 +136,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                                 </div>
                             </div>
                         )}
-                        <AddToCart/>
+                        <AddToCart disabled={isOutOfStock} />
                     </div>
                 </div>
             </div>
