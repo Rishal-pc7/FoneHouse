@@ -2,32 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart, Search, Filter } from 'lucide-react';
+import { Search, Filter, ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
-import { JsonValue } from '@prisma/client/runtime/client';
-
-interface Product {
-    id: number;
-    name: string;
-    brand: string;
-    stock: number;
-    isInStock: boolean;
-    description: string | null;
-    price: number;
-    category: string;
-    img: string;
-    created_at: string;
-    specifications: JsonValue;
-}
+import { Product } from '@/lib/types';
+import AddToCartButton from '@/components/AddToCartButton';
 
 interface ShopClientProps {
     products: Product[];
 }
 
 export default function ShopClient({ products }: ShopClientProps) {
-    const { addToCart } = useCart();
+
 
     return (
         <main className="min-h-screen bg-gray-50 dark:bg-zinc-950 pb-20">
@@ -105,22 +91,7 @@ export default function ShopClient({ products }: ShopClientProps) {
                                         <div className="text-xl font-bold text-gray-900 dark:text-white">
                                             SAR <span>{new Intl.NumberFormat('en-SA').format(product.price)}</span>
                                         </div>
-                                        <Button
-                                            size="sm"
-                                            disabled={isOutOfStock}
-                                            className={`rounded-full shadow-md transition-transform
-                                            ${isOutOfStock
-                                                    ? 'bg-gray-400 cursor-not-allowed shadow-none'
-                                                    : 'bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 hover:scale-105'
-                                                }`}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (!isOutOfStock) addToCart();
-                                            }}
-                                        >
-                                            <ShoppingCart size={16} className="mr-2" />
-                                            {isOutOfStock ? 'Sold Out' : 'Add'}
-                                        </Button>
+                                        <AddToCartButton productId={product.id} isOutOfStock={isOutOfStock} price={product.price} />
                                     </CardFooter>
                                 </Card>
                             </Link>
@@ -128,6 +99,6 @@ export default function ShopClient({ products }: ShopClientProps) {
                     })}
                 </div>
             </div>
-        </main>
+        </main >
     );
 }

@@ -237,7 +237,7 @@ export default function ProductsTable({ initialProducts }: ProductsTableProps) {
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Price</p>
-                                    <p className="font-semibold text-gray-900 dark:text-white">SAR {Number(product.price).toLocaleString()}</p>
+                                    <p className="font-semibold text-gray-900 dark:text-white">SAR {new Intl.NumberFormat('en-SA').format(product.price)}</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">Stock</p>

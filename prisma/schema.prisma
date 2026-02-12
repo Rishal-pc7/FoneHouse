@@ -12,8 +12,13 @@ model Cart {
   userId    Int?       @unique
   sessionId String?    @unique
   updatedAt DateTime   @default(now())
+  createdAt DateTime   @default(now())
+  totalPrice Int
+  totalItems Int
+  
   Users     Users?     @relation(fields: [userId], references: [id])
   CartItem  CartItem[]
+  Orders    Orders[]
 }
 
 model CartItem {
@@ -23,7 +28,6 @@ model CartItem {
   quantity  Int      @default(1)
   Cart      Cart     @relation(fields: [cartId], references: [id])
   Products  Products @relation(fields: [productId], references: [id])
-
   @@unique([cartId, productId])
 }
 
@@ -32,9 +36,19 @@ model Orders {
   userId       Int?
   total_amount Int
   status       String   @default("PENDING")
-  products     Int[]
+  cartId         Int?
+  email        String
+  firstName    String
+  lastName     String
+  address      String
+  apartment    String?
+  city         String
+  postalCode   String
+  phone        String
+  paymentMethod String
   created_at   DateTime @default(now())
   Users        Users?   @relation(fields: [userId], references: [id])
+  Cart         Cart?   @relation(fields: [cartId], references: [id])
 }
 
 model Products {

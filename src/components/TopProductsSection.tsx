@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import AddToCartButton from './AddToCartButton';
 import prisma from '@/lib/db';
@@ -91,7 +91,7 @@ export default async function TopProductsSection() {
                                     <div className="text-sm md:text-xl font-bold text-gray-900 dark:text-white">
                                         SAR {new Intl.NumberFormat('en-SA').format(product.price.toNumber())}
                                     </div>
-                                    <AddToCartButton disabled={isOutOfStock} />
+                                    <AddToCartButton productId={product.id} isOutOfStock={isOutOfStock} price={product.price.toNumber()} />
                                 </CardFooter>
                             </Card>
                         )

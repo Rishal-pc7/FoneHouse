@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Manrope, Urbanist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   description: "FoneHouse is Saudi Arabia’s leading destination for retail and wholesale mobile sales, expert repairs, and genuine accessories. Trusted by thousands for top brands, quality service, and competitive prices—perfect for both individual customers and business needs.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -34,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${manrope.variable} ${urbanist.variable} relative font-manrope dark antialiased`}>
-        <CartProvider>
+        <CartProvider hasSession={(await cookies()).has('session_id')}>
           <Navbar />
           {children}
           {/* <WhatsappButton/> */}

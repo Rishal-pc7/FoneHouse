@@ -3,7 +3,9 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Star, Check, ShieldCheck, Truck } from 'lucide-react';
 import Link from 'next/link';
 import prisma from '@/lib/db';
-import { AddToCart } from './Client';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
+import AddToCartButton from '@/components/AddToCartButton';
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -136,7 +138,18 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                                 </div>
                             </div>
                         )}
-                        <AddToCart disabled={isOutOfStock} />
+                        <div className="flex gap-4">
+                            <AddToCartButton
+                                productId={parseInt(id)}
+                                isOutOfStock={isOutOfStock}
+                                price={product.price.toNumber()}
+                                className={`flex-1 rounded-full text-lg h-14 text-white shadow-xl transition-all
+                                    ${isOutOfStock
+                                        ? 'bg-gray-400 cursor-not-allowed shadow-none hover:bg-gray-400' // Override/Merge styles
+                                        : 'bg-brandBlue hover:bg-blue-700 shadow-blue-500/20'
+                                    }`}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
