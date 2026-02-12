@@ -18,7 +18,6 @@ model Cart {
   
   Users     Users?     @relation(fields: [userId], references: [id])
   CartItem  CartItem[]
-  Orders    Orders[]
 }
 
 model CartItem {
@@ -34,21 +33,29 @@ model CartItem {
 model Orders {
   id           Int      @id @default(autoincrement())
   userId       Int?
-  total_amount Int
+  sessionId    String?
+  totalPrice   Int
   status       String   @default("PENDING")
-  cartId         Int?
   email        String
   firstName    String
   lastName     String
   address      String
-  apartment    String?
   city         String
   postalCode   String
   phone        String
   paymentMethod String
   created_at   DateTime @default(now())
+  OrderItem    OrderItem[]
   Users        Users?   @relation(fields: [userId], references: [id])
-  Cart         Cart?   @relation(fields: [cartId], references: [id])
+}
+model OrderItem{
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int      @default(1)
+  Orders     Orders     @relation(fields: [orderId], references: [id])
+  Products  Products @relation(fields: [productId], references: [id])
+  @@unique([orderId, productId])
 }
 
 model Products {
@@ -64,6 +71,7 @@ model Products {
   specifications Json?
   created_at     DateTime   @default(now())
   CartItem       CartItem[]
+  OrderItem      OrderItem[]
 }
 
 model Users {

@@ -230,11 +230,12 @@ export default function CartContent({ cart }: { cart: SerializedCart | null }) {
                                             </span>
                                         </div>
                                     </div>
-
+                                    <Link href={`/checkout/${cart?.id}`}>
                                     <Button className="w-full h-14 text-lg font-bold rounded-xl bg-brandBlue hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/20 group">
                                         Checkout
                                         <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                                     </Button>
+                                    </Link>
 
                                     <div className="mt-4 text-center">
                                         <p className="text-xs text-gray-500 dark:text-gray-400">

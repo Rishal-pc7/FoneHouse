@@ -17,6 +17,7 @@ export default function AddToCartButton({ productId, className, isOutOfStock,pri
     const addToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
+        setCount((prev) => prev + 1);
         const response = await fetch("/api/cart/addToCart", {
             method: "POST",
             headers: {
@@ -27,7 +28,6 @@ export default function AddToCartButton({ productId, className, isOutOfStock,pri
         if (!response.ok) {
             throw new Error("Failed to add product to cart")
         }
-        setCount((prev) => prev + 1);
         const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
         localStorage.setItem('cartCount', (currentCount + 1).toString());
     };

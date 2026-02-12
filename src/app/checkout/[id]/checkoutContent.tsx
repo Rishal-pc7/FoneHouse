@@ -23,39 +23,37 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useCart } from '@/context/CartContext';
 
-// Mock Cart Data
-const MOCK_CART = {
-    items: [
-        {
-            id: 1,
-            name: 'iPhone 15 Pro Max',
-            price: 5199,
-            quantity: 1,
-            image: 'https://images.unsplash.com/photo-1695048133169-ea79a5a6836f?q=80&w=2071&auto=format&fit=crop',
-            variant: '256GB - Natural Titanium'
-        },
-        {
-            id: 2,
-            name: 'AirPods Pro (2nd Gen)',
-            price: 949,
-            quantity: 1,
-            image: 'https://images.unsplash.com/photo-1628210889224-53b2e93a6c88?q=80&w=1000&auto=format&fit=crop',
-            variant: 'USB-C MagSafe Case'
-        }
-    ],
-    subtotal: 6148,
-    shipping: 0,
-    tax: 922.2, // 15%
-    total: 7070.2
-};
+interface SerializedCart {
+    id: number;
+    userId: number | null;
+    sessionId: string | null;
+    totalPrice: number;
+    totalItems: number;
+    CartItem: {
+        id: number;
+        cartId: number;
+        productId: number;
+        quantity: number;
+        Products: {
+            id: number;
+            name: string;
+            price: number; // transformed to number
+            img: string;
+            category: string;
+            isInStock: boolean;
+            brand: string;
+            created_at: Date;
+        };
+    }[];
+}
 
 const formSchema = z.object({
     email: z.string().email({ message: 'Please enter a valid email address' }),
     firstName: z.string().min(2, { message: 'First name is required' }),
     lastName: z.string().min(2, { message: 'Last name is required' }),
     address: z.string().min(5, { message: 'Address is required' }),
-    apartment: z.string().optional(),
     city: z.string().min(2, { message: 'City is required' }),
     postalCode: z.string().min(3, { message: 'Postal code is required' }),
     phone: z.string().min(9, { message: 'Valid phone number is required' }),
@@ -64,10 +62,11 @@ const formSchema = z.object({
     }),
 });
 
-export default function CheckoutPage() {
+export default function CheckoutContent({ cart }: { cart: SerializedCart | null }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const {setCount}=useCart()
+    const totalPrice = cart?cart.totalPrice:0  
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -75,7 +74,6 @@ export default function CheckoutPage() {
             firstName: '',
             lastName: '',
             address: '',
-            apartment: '',
             city: '',
             postalCode: '',
             phone: '',
@@ -87,24 +85,22 @@ export default function CheckoutPage() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        console.log('Order Data:', values);
-        console.log('Cart Data:', MOCK_CART);
-
-        if (values.paymentMethod === 'prepaid') {
-            // Simulate redirect to Ottu
             // window.location.href = 'https://ottu.com/checkout/...'; 
-            alert('Redirecting to Ottu Payment Gateway...');
-            // For now, redirect to success as well for demo
-            router.push('/checkout/success');
-        } else {
-            // COD - Redirect to success
-            router.push('/checkout/success');
-        }
-
+            const response=await fetch('/api/checkout',{method:'POST',body:JSON.stringify({cartId:cart?.id,values})})
+            const data=await response.json()
+            if(response.ok){
+                if(paymentMethod==="prepaid"){
+                    console.log(data.data.checkout_page_url);
+                    
+                    window.location.href = data.data.checkout_page_url
+                }else{
+                    router.push('/checkout/success');
+                }
+            }else{
+                throw new Error('Failed to create order');
+            }
+        setCount(0);
+        localStorage.removeItem('cartCount');
         setIsSubmitting(false);
     }
 
@@ -302,12 +298,12 @@ export default function CheckoutPage() {
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
-                                        {MOCK_CART.items.map((item) => (
+                                        {cart?.CartItem?.map((item) => (
                                             <div key={item.id} className="flex gap-4">
                                                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100 dark:border-zinc-800">
                                                     <Image
-                                                        src={item.image}
-                                                        alt={item.name}
+                                                        src={item.Products.img}
+                                                        alt={item.Products.name}
                                                         fill
                                                         className="object-cover"
                                                     />
@@ -316,10 +312,10 @@ export default function CheckoutPage() {
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.name}</p>
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.variant}</p>
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.Products.name}</p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{item.Products.category}</p>
                                                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
-                                                        SAR {new Intl.NumberFormat('en-SA').format(item.price)}
+                                                        SAR {new Intl.NumberFormat('en-SA').format(item.Products.price)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -331,7 +327,7 @@ export default function CheckoutPage() {
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                             <span>Subtotal</span>
-                                            <span>SAR {new Intl.NumberFormat('en-SA').format(MOCK_CART.subtotal)}</span>
+                                            <span>SAR {new Intl.NumberFormat('en-SA').format(totalPrice)}</span>
                                         </div>
                                         <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                             <span>Shipping</span>
@@ -339,7 +335,7 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                             <span>Tax (15%)</span>
-                                            <span>SAR {new Intl.NumberFormat('en-SA').format(MOCK_CART.tax)}</span>
+                                            <span>SAR {new Intl.NumberFormat('en-SA').format(totalPrice* 0.15)}</span>
                                         </div>
                                     </div>
 
@@ -348,7 +344,7 @@ export default function CheckoutPage() {
                                     <div className="flex justify-between items-center">
                                         <span className="text-base font-bold text-gray-900 dark:text-white">Total</span>
                                         <span className="text-xl font-extrabold text-brandBlue">
-                                            SAR {new Intl.NumberFormat('en-SA').format(MOCK_CART.total)}
+                                            SAR {new Intl.NumberFormat('en-SA').format(totalPrice+(totalPrice*0.15))}
                                         </span>
                                     </div>
 
