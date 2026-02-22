@@ -65,8 +65,8 @@ const formSchema = z.object({
 export default function CheckoutContent({ cart }: { cart: SerializedCart | null }) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const {setCount}=useCart()
-    const totalPrice = cart?cart.totalPrice:0  
+    const { setCount } = useCart()
+    const totalPrice = cart ? cart.totalPrice : 0
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -85,20 +85,20 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
-            // window.location.href = 'https://ottu.com/checkout/...'; 
-            const response=await fetch('/api/checkout',{method:'POST',body:JSON.stringify({cartId:cart?.id,values})})
-            const data=await response.json()
-            if(response.ok){
-                if(paymentMethod==="prepaid"){
-                    console.log(data.data.checkout_page_url);
-                    
-                    window.location.href = data.data.checkout_page_url
-                }else{
-                    router.push('/checkout/success');
-                }
-            }else{
-                throw new Error('Failed to create order');
+        // window.location.href = 'https://ottu.com/checkout/...'; 
+        const response = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cartId: cart?.id, values }) })
+        const data = await response.json()
+        if (response.ok) {
+            if (paymentMethod === "prepaid") {
+                console.log(data.data.checkout_page_url);
+
+                window.location.href = data.data.checkout_page_url
+            } else {
+                router.push(`/checkout/success/${data.order.id}`);
             }
+        } else {
+            throw new Error('Failed to create order');
+        }
         setCount(0);
         localStorage.removeItem('cartCount');
         setIsSubmitting(false);
@@ -335,7 +335,7 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
                                         </div>
                                         <div className="flex justify-between text-gray-600 dark:text-gray-400">
                                             <span>Tax (15%)</span>
-                                            <span>SAR {new Intl.NumberFormat('en-SA').format(totalPrice* 0.15)}</span>
+                                            <span>SAR {new Intl.NumberFormat('en-SA').format(totalPrice * 0.15)}</span>
                                         </div>
                                     </div>
 
@@ -344,7 +344,7 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
                                     <div className="flex justify-between items-center">
                                         <span className="text-base font-bold text-gray-900 dark:text-white">Total</span>
                                         <span className="text-xl font-extrabold text-brandBlue">
-                                            SAR {new Intl.NumberFormat('en-SA').format(totalPrice+(totalPrice*0.15))}
+                                            SAR {new Intl.NumberFormat('en-SA').format(totalPrice + (totalPrice * 0.15))}
                                         </span>
                                     </div>
 

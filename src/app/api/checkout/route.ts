@@ -69,7 +69,7 @@ export async function POST(request:NextRequest) {
                 customer_phone: values.phone, // e.g. +966500000000
                 customer_first_name: values.firstName,
                 customer_last_name: values.lastName,
-                redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success`,
+                redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success/${order.id}`,
                 webhook_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/webhooks/ottu`, // Your listener
                 billing_address: {
                     line1: values.address,
