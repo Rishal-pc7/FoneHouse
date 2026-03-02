@@ -18,6 +18,7 @@ model Cart {
   
   Users     Users?     @relation(fields: [userId], references: [id])
   CartItem  CartItem[]
+  Orders    Orders[]
 }
 
 model CartItem {
@@ -27,6 +28,7 @@ model CartItem {
   quantity  Int      @default(1)
   Cart      Cart     @relation(fields: [cartId], references: [id])
   Products  Products @relation(fields: [productId], references: [id])
+
   @@unique([cartId, productId])
 }
 
@@ -35,6 +37,7 @@ model Orders {
   userId       Int?
   sessionId    String?
   totalPrice   Int
+  cartId       Int
   status       String   @default("PENDING")
   email        String
   firstName    String
@@ -47,6 +50,7 @@ model Orders {
   created_at   DateTime @default(now())
   OrderItem    OrderItem[]
   Users        Users?   @relation(fields: [userId], references: [id])
+  Cart         Cart     @relation(fields: [cartId], references: [id])
 }
 model OrderItem{
   id        Int      @id @default(autoincrement())

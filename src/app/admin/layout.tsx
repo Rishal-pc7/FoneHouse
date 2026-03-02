@@ -66,6 +66,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
     )
 
+    if (pathname === '/admin/login') {
+        return <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 font-manrope flex flex-col">{children}</div>
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 flex font-manrope">
             {/* Desktop Sidebar */}

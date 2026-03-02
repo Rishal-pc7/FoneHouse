@@ -24,7 +24,6 @@ interface Product {
 
 export default async function TopProductsSection() {
     const topProducts: Product[] = await prisma.products.findMany({
-        take: 4,
         orderBy: {
             created_at: 'desc',
         },

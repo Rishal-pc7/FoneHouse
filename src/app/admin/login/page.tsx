@@ -33,6 +33,8 @@ export default function AdminLoginPage() {
                     fill
                     className="object-cover"
                     quality={50}
+                    priority
+                    unoptimized
                 />
             </div>
 

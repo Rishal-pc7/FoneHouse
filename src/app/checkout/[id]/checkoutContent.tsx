@@ -85,13 +85,10 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSubmitting(true);
-        // window.location.href = 'https://ottu.com/checkout/...'; 
         const response = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cartId: cart?.id, values }) })
         const data = await response.json()
         if (response.ok) {
             if (paymentMethod === "prepaid") {
-                console.log(data.data.checkout_page_url);
-
                 window.location.href = data.data.checkout_page_url
             } else {
                 router.push(`/checkout/success/${data.order.id}`);
