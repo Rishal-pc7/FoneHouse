@@ -25,7 +25,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         const cart = await prisma.cart.update({
             where: { id: cartItem.cartId },
             data: {
-                totalPrice: { decrement: cartItem.quantity * cartItem.Products.price.toNumber() }
+                totalPrice: { decrement: cartItem.quantity * cartItem.Products.price.toNumber() },
+                totalItems: { decrement: cartItem.quantity }
             }
         });
 

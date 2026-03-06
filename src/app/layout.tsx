@@ -10,12 +10,14 @@ import { CartProvider } from "@/context/CartContext";
 const manrope = Manrope({
   variable: "--font-manrope",
   weight: ['400', '500', '600', '700'],
-  subsets: ['latin']
+  subsets: ['latin'],
+  display: 'swap',
 });
 const urbanist = Urbanist({
   variable: "--font-urbanist",
   weight: ['400', '500', '600', '700', "800"],
-  subsets: ['latin']
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {

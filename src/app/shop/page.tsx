@@ -1,21 +1,17 @@
-import ShopClient from './ShopClient';
-import prisma from '@/lib/db';
+import { getProducts } from "./shop.actions";
+import ShopHero from "./_components/ShopHero";
+import ProductGrid from "./_components/ProductGrid";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function ShopPage() {
-    const products = await prisma.products.findMany({
-        orderBy: {
-            created_at: 'desc',
-        },
-    });
+    const products = await getProducts();
 
-    const formattedProducts = products.map((product) => ({
-        ...product,
-        price: product.price.toNumber(),
-        created_at: product.created_at.toISOString(),
-    }));
-
-    return <ShopClient products={formattedProducts} />;
+    return (
+        <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-[#020202] pb-20 selection:bg-brandBlue/30 text-zinc-100 overflow-hidden font-manrope relative">
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none" />
+            <ShopHero />
+            <ProductGrid products={products} />
+        </main>
+    );
 }
-

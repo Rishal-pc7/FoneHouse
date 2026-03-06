@@ -7,6 +7,8 @@ import AboutSection from "./AboutSection";
 import { Template } from "./Template";
 import BrandsSection from "./BrandsSection";
 import LocationSection from "./LocationSection";
+import { Suspense } from "react";
+import TopProductsSkeleton from "@/components/TopProductsSkeleton";
 export default function Home() {
   return (
     <>
@@ -23,7 +25,9 @@ export default function Home() {
         </Template>
       </div>
       <AboutSection />
-      <TopProductsSection />
+      <Suspense fallback={<TopProductsSkeleton />}>
+        <TopProductsSection />
+      </Suspense>
       <BrandsSection />
       <LocationSection />
       <ContactSection />

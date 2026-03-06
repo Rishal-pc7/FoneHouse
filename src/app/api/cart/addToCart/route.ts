@@ -57,18 +57,17 @@ export async function POST(req: NextRequest) {
                 quantity: 1
             }
         })
-
-        await prisma.cart.update({
+        const updatedCart = await prisma.cart.update({
             where: {
                 id: cart.id
             },
             data: {
-                totalPrice: cart.totalPrice + (cartItem.quantity * price),
+                totalPrice: cart.totalPrice.toNumber() + (cartItem.quantity * price),
                 totalItems: cart.totalItems + 1
             }
         })
         return NextResponse.json(
-            { message: "Product added to cart", data: cartItem },
+            { message: "Product added to cart", data:{totalPrice:updatedCart.totalPrice.toNumber(),totalItems:updatedCart.totalItems } },
             { status: 200 }
         )
 

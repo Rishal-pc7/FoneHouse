@@ -13,12 +13,14 @@ model Cart {
   sessionId String?    @unique
   updatedAt DateTime   @default(now())
   createdAt DateTime   @default(now())
-  totalPrice Int
+  totalPrice Decimal
   totalItems Int
   
   Users     Users?     @relation(fields: [userId], references: [id])
   CartItem  CartItem[]
   Orders    Orders[]
+
+  @@index([sessionId])
 }
 
 model CartItem {
@@ -36,7 +38,7 @@ model Orders {
   id           Int      @id @default(autoincrement())
   userId       Int?
   sessionId    String?
-  totalPrice   Int
+  totalPrice   Decimal
   cartId       Int
   status       String   @default("PENDING")
   email        String

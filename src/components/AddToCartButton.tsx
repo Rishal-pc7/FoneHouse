@@ -28,8 +28,8 @@ export default function AddToCartButton({ productId, className, isOutOfStock,pri
         if (!response.ok) {
             throw new Error("Failed to add product to cart")
         }
-        const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
-        localStorage.setItem('cartCount', (currentCount + 1).toString());
+        const data = await response.json();
+        localStorage.setItem('cartCount', data.data.totalItems.toString());
     };
 
     return (

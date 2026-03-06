@@ -28,6 +28,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
     })    
     const serializedCart = cart ? {
         ...cart,
+        totalPrice: cart.totalPrice.toNumber(),
         CartItem: cart.CartItem.map((item) => ({
             ...item,
             Products: {
