@@ -35,8 +35,17 @@ export default function AdminLoginPage() {
             if (res?.error) {
                 setServerError("Invalid credentials.")
             } else if (res?.ok) {
-                router.push("/admin")
-                router.refresh()
+                // Explicitly check role before redirecting
+                const { getSession, signOut } = await import('next-auth/react')
+                const session = await getSession()
+
+                if (session?.user?.role !== 'ADMIN') {
+                    await signOut({ redirect: false })
+                    setServerError("Access denied. Admin privileges required.")
+                    return
+                }
+
+                window.location.href = "/admin"
             }
         } catch (e) {
             setServerError("Something went wrong.")
