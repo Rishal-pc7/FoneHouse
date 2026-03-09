@@ -1,4 +1,6 @@
-export type OrderStatus = 'processing' | 'shipped' | 'delivered';
+import { Orders, OrderItem, Products } from '@/generated/prisma/client';
+
+export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 
 export interface AdminOrder {
     id: string;
@@ -9,3 +11,10 @@ export interface AdminOrder {
     status: OrderStatus;
     items: number;
 }
+
+export type OrderWithDetails = Orders & {
+    OrderItem: (OrderItem & {
+        Products: Products;
+    })[];
+};
+export type orderItem=OrderItem & {Products:Products}

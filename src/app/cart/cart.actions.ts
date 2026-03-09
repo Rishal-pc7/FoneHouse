@@ -1,11 +1,12 @@
 'use server';
 
+import { auth } from '@/auth';
 import prisma from '@/lib/db';
 import { cookies } from 'next/headers';
-
 export async function getCart() {
     const cookieStore = await cookies();
-    const userId = cookieStore.get('user_id')?.value;
+    const session = await auth();
+    const userId = session?.user?.id;
     const sessionId = cookieStore.get('session_id')?.value;
 
     let cart = null;

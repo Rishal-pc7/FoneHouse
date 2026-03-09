@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import { CartProvider } from "@/context/CartContext";
+import { SessionProvider } from "next-auth/react";
 
 
 const manrope = Manrope({
@@ -37,12 +38,14 @@ export default async function RootLayout({
     <html lang="en">
       <body
         className={`${manrope.variable} ${urbanist.variable} relative font-manrope dark antialiased`}>
+        <SessionProvider>
         <CartProvider hasSession={(await cookies()).has('session_id')}>
           <Navbar />
           {children}
           {/* <WhatsappButton/> */}
           <Footer />
         </CartProvider>
+        </SessionProvider>
       </body>
     </html>
   );

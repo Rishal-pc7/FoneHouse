@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { AdminOrder, OrderStatus } from './admin-orders.types';
+import Link from 'next/link';
 
 interface AdminOrdersTableProps {
     initialOrders: AdminOrder[];
@@ -10,19 +11,13 @@ interface AdminOrdersTableProps {
 export function AdminOrdersTable({ initialOrders }: AdminOrdersTableProps) {
     const [orders, setOrders] = useState<AdminOrder[]>(initialOrders);
 
-    const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-        setOrders((prevOrders) =>
-            prevOrders.map((order) =>
-                order.id === orderId ? { ...order, status: newStatus } : order
-            )
-        );
-    };
-
     const getStatusColor = (status: OrderStatus) => {
         switch (status) {
+            case 'pending': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-400';
             case 'processing': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500';
             case 'shipped': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500';
             case 'delivered': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500';
+            case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500';
             default: return 'bg-gray-100 text-gray-800';
         }
     };
@@ -45,7 +40,7 @@ export function AdminOrdersTable({ initialOrders }: AdminOrdersTableProps) {
                     <tbody className="divide-y divide-gray-200 dark:divide-zinc-800">
                         {orders.map((order) => (
                             <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
-                                <td className="p-4 font-medium dark:text-white">{order.id}</td>
+                                <td className="p-4 font-medium dark:text-white">#{order.id}</td>
                                 <td className="p-4">
                                     <div className="dark:text-white">{order.customerName}</div>
                                     <div className="text-sm text-gray-500 dark:text-gray-400">{order.customerEmail}</div>
@@ -61,18 +56,22 @@ export function AdminOrdersTable({ initialOrders }: AdminOrdersTableProps) {
                                     </span>
                                 </td>
                                 <td className="p-4 text-right">
-                                    <select
-                                        value={order.status}
-                                        onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                                        className="text-sm rounded-lg border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white px-3 py-1.5 focus:ring-brandBlue focus:border-brandBlue"
+                                    <Link
+                                        href={`/admin/orders/${order.id}`}
+                                        className="text-sm font-medium text-brandBlue hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
                                     >
-                                        <option value="processing">Processing</option>
-                                        <option value="shipped">Shipped</option>
-                                        <option value="delivered">Delivered</option>
-                                    </select>
+                                        View Details
+                                    </Link>
                                 </td>
                             </tr>
                         ))}
+                        {orders.length === 0 && (
+                            <tr>
+                                <td colSpan={7} className="p-8 text-center text-gray-500 dark:text-gray-400">
+                                    No orders found.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

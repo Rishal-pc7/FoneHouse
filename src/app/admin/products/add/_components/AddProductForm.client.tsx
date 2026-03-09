@@ -84,7 +84,9 @@ export default function AddProductForm() {
         if (!mainImg) return
         const newMainImgPreview = URL.createObjectURL(mainImg)
         setMainImgPreview(newMainImgPreview)
-        URL.revokeObjectURL(mainImgPreview || "")
+        return ()=>{
+            URL.revokeObjectURL(mainImgPreview || "")
+        }
 
     }, [mainImg])
     return (
@@ -212,11 +214,8 @@ export default function AddProductForm() {
                                             onChange={async (e) => {
                                                 const file = e.target.files?.[0];
                                                 if (!file) return;
-                                                const reader = new FileReader();
                                                 setMainImg(file);
                                                 setValue("img", e.target.files, { shouldValidate: true, shouldDirty: true })
-
-                                                reader.readAsDataURL(file);
                                             }}
                                         />
                                     </label>

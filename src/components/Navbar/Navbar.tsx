@@ -9,14 +9,17 @@ import { Navlinks } from './NavActions';
 import MobNav from './MobNav';
 import Logo from '../../logo.webp';
 import { usePathname } from 'next/navigation';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { useCart } from '@/context/CartContext';
+import SearchBar from './SearchBar.client';
 
 function Navbar() {
   const pathname = usePathname();
   const { cartCount } = useCart();
+
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
 
   if (pathname?.startsWith('/admin')) return null;
 
@@ -78,18 +81,15 @@ function Navbar() {
         </div>
 
         {/* Row 2: Full Width Search Bar (Not Sticky, offset for fixed header) */}
-        <div className="mt-[68px] bg-black/30 backdrop-blur-md border-b border-white/10 py-3">
-          <div className="container mx-auto px-4">
-            <div className="relative w-full group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm transition-all outline-none focus:bg-white/10 focus:border-brandBlue/50 text-white placeholder:text-gray-400"
-              />
+        {!isAuthPage && (
+          <div className="mt-[68px] bg-black/30 backdrop-blur-md border-b border-white/10 py-3">
+            <div className="container mx-auto px-4">
+              <div className="relative w-full group">
+                <SearchBar />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Desktop Layout (Sticky Header) */}
@@ -108,14 +108,11 @@ function Navbar() {
 
           {/* Center: Search Bar */}
           <div className="flex-1 max-w-xl mx-auto">
-            <div className="relative w-full group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="w-full bg-white/5 border border-white/10 rounded-full pl-11 pr-4 py-2.5 text-sm transition-all outline-none focus:bg-white/10 focus:border-brandBlue/50 text-white placeholder:text-gray-400"
-              />
-            </div>
+            {!isAuthPage && (
+              <div className="relative w-full group">
+                <SearchBar />
+              </div>
+            )}
           </div>
 
           {/* Right: Links & Icons */}

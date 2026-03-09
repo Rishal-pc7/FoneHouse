@@ -88,9 +88,11 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
         setIsSubmitting(true);
         const response = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cartId: cart?.id, values }) })
         const data = await response.json()
+        
         if (response.ok) {
+            console.log(data.data);
             if (paymentMethod === "prepaid") {
-                window.location.href = data.data.checkout_page_url
+                window.location.href = data.data.checkout_url
             } else {
                 router.push(`/checkout/success/${data.order.id}`);
             }

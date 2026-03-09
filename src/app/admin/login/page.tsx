@@ -1,28 +1,47 @@
 'use client'
 
-import React, { useActionState } from 'react'
-import { useFormStatus } from 'react-dom'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { login } from '@/app/actions/auth'
+import { signIn } from 'next-auth/react'
 import Image from 'next/image'
 import HeroBg from '../../hero-bg.webp'
-
-function SubmitButton() {
-    const { pending } = useFormStatus()
-
-    return (
-        <button
-            disabled={pending}
-            type="submit"
-            className="w-full bg-brandBlue text-white py-3 px-6 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-            {pending ? 'Logging in...' : 'Login'}
-        </button>
-    )
-}
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 
 export default function AdminLoginPage() {
-    const [state, formAction] = useActionState(login, null)
+    const router = useRouter()
+    const [serverError, setServerError] = useState<string | null>(null)
+
+    const {
+        register,
+        handleSubmit,
+        formState: { isSubmitting }
+    } = useForm({
+        defaultValues: {
+            email: '',
+            password: ''
+        }
+    })
+
+    const onSubmit = async (data: any) => {
+        setServerError(null)
+        try {
+            const res = await signIn('credentials', {
+                email: data.email,
+                password: data.password,
+                redirect: false
+            })
+
+            if (res?.error) {
+                setServerError("Invalid credentials.")
+            } else if (res?.ok) {
+                router.push("/admin")
+                router.refresh()
+            }
+        } catch (e) {
+            setServerError("Something went wrong.")
+        }
+    }
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900 overflow-hidden relative">
@@ -53,17 +72,16 @@ export default function AdminLoginPage() {
                     </p>
                 </div>
 
-                <form action={formAction} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Username
+                            Username / Email
                         </label>
                         <input
-                            name="username"
                             type="text"
-                            required
+                            {...register("email", { required: true })}
                             className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white/50 dark:bg-zinc-800/50 focus:ring-2 focus:ring-brandBlue outline-none transition-all"
-                            placeholder="Enter username"
+                            placeholder="Enter username or email"
                         />
                     </div>
 
@@ -72,23 +90,28 @@ export default function AdminLoginPage() {
                             Password
                         </label>
                         <input
-                            name="password"
                             type="password"
-                            required
+                            {...register("password", { required: true })}
                             className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white/50 dark:bg-zinc-800/50 focus:ring-2 focus:ring-brandBlue outline-none transition-all"
                             placeholder="Enter password"
                         />
                     </div>
 
-                    {state?.error && (
+                    {serverError && (
                         <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                             <p className="text-red-500 text-sm text-center font-medium">
-                                {state.error}
+                                {serverError}
                             </p>
                         </div>
                     )}
 
-                    <SubmitButton />
+                    <button
+                        disabled={isSubmitting}
+                        type="submit"
+                        className="w-full bg-brandBlue text-white py-3 px-6 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isSubmitting ? 'Logging in...' : 'Login'}
+                    </button>
                 </form>
             </motion.div>
         </div>

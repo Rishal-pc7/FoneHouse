@@ -3,16 +3,10 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Package, Settings, LogOut, ChevronRight, MapPin, Eye, Edit2, Key, Bell } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
-// Dummy User Data
-const USER_DATA = {
-    firstName: "Alex",
-    lastName: "Designer",
-    email: "alex@example.com",
-    phone: "+1 (555) 123-4567",
-    avatar: "https://ui-avatars.com/api/?name=Alex+Designer&background=3277bc&color=fff",
-    memberSince: "March 2025"
-};
+
 
 // Dummy Orders Data
 const ORDERS_DATA = [
@@ -49,7 +43,20 @@ const TABS = [
 export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState("orders");
     const [isHoveringLogout, setIsHoveringLogout] = useState(false);
+    const { data: session, status } = useSession();
 
+    if (status === "loading") {
+        return (
+            <main className="min-h-screen pt-24 pb-20 bg-background flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-4 border-brandBlue/30 border-t-brandBlue animate-spin" />
+            </main>
+        );
+    }
+
+    if (!session) {
+        return redirect("/login");
+    }
+    const USER_DATA = session.user;
     return (
         <main className="min-h-screen pt-24 pb-20 bg-background text-foreground selection:bg-brandBlue/30 selection:text-brandBlue">
             <div className="container mx-auto px-4 md:px-6 max-w-7xl">
@@ -80,16 +87,15 @@ export default function ProfilePage() {
                     >
                         {/* User Mini Profile */}
                         <div className="flex items-center gap-4 mb-8 p-4 rounded-2xl bg-card border border-border shadow-sm">
-                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-brandBlue/10 flex-shrink-0">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={USER_DATA.avatar} alt="Profile Avatar" className="w-full h-full object-cover" />
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-brandBlue/10 flex-shrink-0 flex items-center justify-center text-brandBlue font-bold text-2xl uppercase">
+                                {USER_DATA.name?.charAt(0) || 'U'}
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg font-[family-name:var(--font-urbanist)] line-clamp-1">
-                                    {USER_DATA.firstName} {USER_DATA.lastName}
+                                    {USER_DATA.name}
                                 </h3>
                                 <span className="text-xs text-brandBlue font-semibold bg-brandBlue/10 px-2 py-0.5 rounded-full inline-block mt-1">
-                                    Premium Member
+                                    Member
                                 </span>
                             </div>
                         </div>
@@ -117,6 +123,7 @@ export default function ProfilePage() {
                             <div className="h-px bg-border/50 my-2 hidden lg:block" />
 
                             <button
+                                onClick={() => signOut({ callbackUrl: "/login" })}
                                 onMouseEnter={() => setIsHoveringLogout(true)}
                                 onMouseLeave={() => setIsHoveringLogout(false)}
                                 className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-destructive hover:bg-destructive/10 whitespace-nowrap lg:whitespace-normal"
@@ -218,28 +225,14 @@ export default function ProfilePage() {
 
                                     <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                                            {/* Form Fields - Read Only State visually */}
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">First Name</label>
-                                                <p className="text-lg font-medium border-b border-border/50 pb-2 bg-transparent">{USER_DATA.firstName}</p>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Last Name</label>
-                                                <p className="text-lg font-medium border-b border-border/50 pb-2 bg-transparent">{USER_DATA.lastName}</p>
+                                            <div className="space-y-2 md:col-span-2">
+                                                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Full Name</label>
+                                                <p className="text-lg font-medium border-b border-border/50 pb-2 bg-transparent">{USER_DATA.name}</p>
                                             </div>
                                             <div className="space-y-2 md:col-span-2">
                                                 <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Email Address</label>
                                                 <p className="text-lg font-medium border-b border-border/50 pb-2 bg-transparent">{USER_DATA.email}</p>
                                             </div>
-                                            <div className="space-y-2 md:col-span-2">
-                                                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Phone Number</label>
-                                                <p className="text-lg font-medium border-b border-border/50 pb-2 bg-transparent">{USER_DATA.phone}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-8 pt-6 border-t border-border flex items-center gap-2 text-muted-foreground text-sm">
-                                            <Bell className="w-4 h-4" />
-                                            <span>Member since {USER_DATA.memberSince}</span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -269,7 +262,7 @@ export default function ProfilePage() {
                                                 Default
                                             </div>
                                             <h3 className="font-bold text-lg mb-2">Home</h3>
-                                            <p className="text-muted-foreground mb-1">{USER_DATA.firstName} {USER_DATA.lastName}</p>
+                                            <p className="text-muted-foreground mb-1">{USER_DATA.name}</p>
                                             <p className="text-muted-foreground leading-relaxed mb-4">
                                                 123 Aesthetic Avenue<br />
                                                 Design District<br />
@@ -340,7 +333,7 @@ export default function ProfilePage() {
                     </motion.div>
 
                 </div>
-            </div>
-        </main>
+            </div >
+        </main >
     );
 }

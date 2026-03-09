@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       if (orderId) {
         await prisma.orders.update({
           where: { id: orderId },
-          data: { status: 'FAILED' }
+          data: { status: 'PENDING' }
         });
       }
     }

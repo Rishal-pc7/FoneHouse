@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { DUMMY_ORDER } from "./data";
 import type { Order } from "./types";
 import PageHero from "./PageHero";
 import SearchForm from "./SearchForm";

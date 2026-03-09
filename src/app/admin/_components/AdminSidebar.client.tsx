@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { logout } from '@/app/actions/auth'
+import { signOut } from 'next-auth/react'
 import LayoutDashboard from 'lucide-react/dist/esm/icons/layout-dashboard';
 import LogOut from 'lucide-react/dist/esm/icons/log-out';
 import Users from 'lucide-react/dist/esm/icons/users';
@@ -66,7 +66,7 @@ function SidebarShell({ children, onClose }: { children: React.ReactNode; onClos
             {children}
             <div className="p-4 border-t border-gray-200 dark:border-zinc-800">
                 <button
-                    onClick={() => logout()}
+                    onClick={() => signOut()}
                     className="flex items-center gap-3 w-full px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl transition-all"
                 >
                     <LogOut className="w-5 h-5" />

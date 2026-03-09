@@ -8,8 +8,7 @@ import Trash from 'lucide-react/dist/esm/icons/trash';
 import SpecsEditor from '@/components/admin/SpecsEditor'
 import { useRouter } from 'next/navigation'
 import { ProductFormData, productSchema } from '../../../products.types'
-import { updateProduct } from '../../../products.actions'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 interface Props {
     id: number;
@@ -18,7 +17,10 @@ interface Props {
 
 export default function EditProductForm({ id, initialData }: Props) {
     const router = useRouter()
-
+    const [mainImg, setMainImg] = useState<File | Blob | undefined>(undefined)
+    const [additionalImages, setAdditionalImages] = useState<(File | string)[]>([])
+    const [mainImgPreview, setMainImgPreview] = useState<string | undefined>(undefined)
+    const [additionalImgPreviews, setAdditionalImgPreviews] = useState<string[]>([])
     const {
         register,
         handleSubmit,
@@ -37,13 +39,87 @@ export default function EditProductForm({ id, initialData }: Props) {
             reset(initialData);
         }
     }, [initialData, reset]);
+    useEffect(() => {
+        if (!mainImg) return
+        const newMainImg = URL.createObjectURL(mainImg)
+        setMainImgPreview(newMainImg)
 
+        return () => {
+            URL.revokeObjectURL(newMainImg)
+        }
+    }, [mainImg])
+    useEffect(() => {
+        const newAdditionalPreviews = additionalImages.map(file => {
+            if (typeof (file) !== "string") {
+                return URL.createObjectURL(file)
+            }
+            return file
+        })
+        setAdditionalImgPreviews(newAdditionalPreviews)
+
+        return () => {
+            newAdditionalPreviews.forEach(file => {
+                if (typeof (file) !== "string") {
+                    URL.revokeObjectURL(file)
+                }
+            }
+            )
+        }
+    }, [additionalImages])
+    useEffect(() => {
+        const mainImgPreview = watch("img") || ""
+        const additionalImgPreviews = (watch("images") as string[]) || []
+        setMainImgPreview(mainImgPreview)
+        setAdditionalImgPreviews(additionalImgPreviews)
+        setAdditionalImages(additionalImgPreviews)
+    }, [])
     const onSubmit = async (data: ProductFormData) => {
-        const result = await updateProduct(id, data);
-        if (result.success) {
-            router.push("/admin/products")
-        } else {
-            console.error(result.error);
+        try {
+            const validatedData = productSchema.parse(data)
+            const formData = new FormData();
+            formData.append('name', validatedData.name);
+            if (validatedData.description) formData.append('description', validatedData.description);
+            formData.append('price', validatedData.price.toString());
+            formData.append('category', validatedData.category);
+            formData.append('brand', validatedData.brand);
+            formData.append('stock', validatedData.stock.toString());
+            formData.append('isInStock', validatedData.isInStock.toString());
+
+            if (validatedData.specifications) {
+                formData.append('specifications', JSON.stringify(validatedData.specifications));
+            }
+
+            // main image
+            const imgVal = validatedData.img;
+            if (typeof imgVal === 'string') {
+                formData.append('existing_img', imgVal);
+            } else if (imgVal?.[0]) {
+                formData.append('img', imgVal[0]);
+            }
+
+            // additional images
+            if (validatedData.images) {
+                Array.from(validatedData.images).forEach((item: any) => {
+                    if (typeof item === 'string') {
+                        formData.append('existing_images', item);
+                    } else if (item.size > 0) {
+                        formData.append('images', item);
+                    }
+                });
+            }
+
+            const result = await fetch(`/api/admin/updateProduct/${id}`, {
+                method: "PUT",
+                body: formData,
+            });
+
+            if (result.ok) {
+                router.push("/admin/products")
+            } else {
+                console.error("Failed to update product");
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -153,8 +229,7 @@ export default function EditProductForm({ id, initialData }: Props) {
                 {/* Main and Additional Images Upload Section */}
                 {(() => {
                     const mainImage = watch('img') || '';
-                    const additionalImages = (watch('images') as string[]) || [];
-
+                    const additionalImgs = (watch('images') as string[]) || [];
                     return (
                         <div className="space-y-6 bg-gray-50 dark:bg-zinc-800/50 p-6 rounded-2xl border border-gray-100 dark:border-zinc-800">
                             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Product Images</h3>
@@ -162,9 +237,12 @@ export default function EditProductForm({ id, initialData }: Props) {
                             {/* Main Image */}
                             <div>
                                 <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Main Display Image (Required)</label>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">This image will be shown on the shop page and as the primary product image.</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                    This image will be shown on the shop page and as the primary product image.
+                                    {mainImage && <span className="block mt-1 text-brandBlue dark:text-blue-400 font-medium">Remove the existing image to add a new one.</span>}
+                                </p>
 
-                                {!mainImage ? (
+                                {!mainImgPreview ? (
                                     <label className="flex flex-col items-center justify-center w-full h-40 px-4 py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-zinc-700 hover:border-brandBlue hover:bg-white dark:hover:bg-zinc-800 cursor-pointer transition-all">
                                         <Upload className="w-8 h-8 text-gray-400 mb-2" />
                                         <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Click to upload main image</span>
@@ -172,23 +250,22 @@ export default function EditProductForm({ id, initialData }: Props) {
                                             type="file" accept="image/*" className="hidden"
                                             onChange={(e) => {
                                                 const file = e.target.files?.[0];
-                                                if (!file) return;
-                                                const reader = new FileReader();
-                                                reader.onloadend = () => {
-                                                    if (reader.result) {
-                                                        setValue('img', reader.result as string, { shouldValidate: true, shouldDirty: true });
-                                                    }
-                                                };
-                                                reader.readAsDataURL(file);
+                                                setMainImg(file)
+                                                setValue('img', e.target.files, { shouldValidate: true, shouldDirty: true });
                                             }}
                                         />
                                     </label>
                                 ) : (
                                     <div className="relative w-40 h-40 rounded-xl border border-gray-200 dark:border-zinc-700 group overflow-hidden bg-white dark:bg-zinc-900 shadow-sm">
-                                        <img src={mainImage} alt="Main" className="object-cover w-full h-full" />
+                                        <img src={mainImgPreview} alt="Main" className="object-cover w-full h-full" />
                                         <button
                                             type="button"
-                                            onClick={() => setValue('img', '', { shouldValidate: true, shouldDirty: true })}
+                                            onClick={() => {
+                                                setMainImg(undefined)
+                                                setMainImgPreview("")
+                                                setValue('img', '', { shouldValidate: true, shouldDirty: true })
+                                            }
+                                            }
                                             className="absolute top-2 right-2 bg-red-500/90 hover:bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"
                                         >
                                             <Trash size={16} />
@@ -218,32 +295,27 @@ export default function EditProductForm({ id, initialData }: Props) {
                                         onChange={(e) => {
                                             const files = e.target.files;
                                             if (!files) return;
-                                            let newImages: string[] = [...additionalImages];
-                                            let processed = 0;
+                                            let newImages: (File | string)[] = [...additionalImages];
                                             Array.from(files).forEach(file => {
-                                                const reader = new FileReader();
-                                                reader.onloadend = () => {
-                                                    if (reader.result) newImages.push(reader.result as string);
-                                                    processed++;
-                                                    if (processed === files.length) {
-                                                        setValue('images', newImages, { shouldValidate: true, shouldDirty: true });
-                                                    }
-                                                };
-                                                reader.readAsDataURL(file);
+                                                newImages.push(file)
                                             });
+                                            setAdditionalImages(newImages)
+                                            setValue("images", newImages, { shouldValidate: true, shouldDirty: true })
                                         }}
                                     />
                                 </label>
 
-                                {additionalImages.length > 0 && (
+                                {additionalImgPreviews.length > 0 && (
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                        {additionalImages.map((src, i) => (
+                                        {additionalImgPreviews.map((src, i) => (
                                             <div key={i} className="relative aspect-square w-full rounded-xl border border-gray-200 dark:border-zinc-700 group overflow-hidden bg-white dark:bg-zinc-900 shadow-sm">
                                                 <img src={src} alt={`Additional ${i + 1}`} className="object-cover w-full h-full" />
                                                 <button
                                                     type="button"
                                                     onClick={() => {
                                                         const newAdd = additionalImages.filter((_, idx) => idx !== i);
+                                                        setAdditionalImages(newAdd)
+
                                                         setValue('images', newAdd, { shouldValidate: true, shouldDirty: true });
                                                     }}
                                                     className="absolute top-2 right-2 bg-red-500/90 hover:bg-red-500 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all shadow-sm backdrop-blur-sm"

@@ -1,10 +1,11 @@
-import type { Order } from "./types";
 import OrderProgress from "./OrderProgress";
-import { STATUS_STEPS } from "./data";
+import OrderStatusBadge from "./OrderStatusBadge";
+import { STATUS_STEPS, SPECIAL_STATUSES } from "./data";
 
 type Props = { order: any };
 
 export default function OrderBanner({ order }: Props) {
+    const isSpecial = order.status in SPECIAL_STATUSES;
     const currentStatusIndex = STATUS_STEPS.findIndex(s => s.id === order.status);
 
     return (
@@ -24,7 +25,11 @@ export default function OrderBanner({ order }: Props) {
                 </div>
             </div>
 
-            <OrderProgress currentStatusIndex={currentStatusIndex} />
+            {isSpecial ? (
+                <OrderStatusBadge status={order.status} />
+            ) : (
+                <OrderProgress currentStatusIndex={currentStatusIndex} />
+            )}
         </div>
     );
 }

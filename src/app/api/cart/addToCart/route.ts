@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import prisma from "@/lib/db";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,8 +7,9 @@ export async function POST(req: NextRequest) {
     try {
         const { productId, price } = await req.json();
         const cookieStore = await cookies();
+        const session = await auth()
         let sessionId = cookieStore.get('session_id')?.value;
-        const userId = cookieStore.get('user_id')?.value;
+        const userId = session?.user.id
         let cart = null
         if (!sessionId && !userId) {
             sessionId = crypto.randomUUID();

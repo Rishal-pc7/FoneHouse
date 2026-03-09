@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { da } from "zod/v4/locales";
 
 export async function POST(request: NextRequest) {
     try {
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
                 payment_type: "one_off", // Crucial for Tabby
                 currency_code: "SAR",
                 amount: cart.totalPrice,
-                pg_codes: ["mada-visa-master","apple-pay","tamara","tabby"],
+                pg_codes: ["mada-visa-master","apple-pay","tamara"],
                 order_no: `ORD-${order.id}`, // Add prefix to make it meaningful in Ottu dashboard
                 customer_id: cart.userId ? cart.userId.toString() : "guest",
                 customer_email: values.email,

@@ -50,6 +50,7 @@ model Orders {
   phone        String
   paymentMethod String
   created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
   OrderItem    OrderItem[]
   Users        Users?   @relation(fields: [userId], references: [id])
   Cart         Cart     @relation(fields: [cartId], references: [id])
@@ -86,6 +87,16 @@ model Users {
   name     String
   email    String   @unique
   password String
+  role     String   @default("USER")
   Cart     Cart?
   Orders   Orders[]
+  Session  Session?
+}
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int      @unique
+  expires      DateTime
+  role         String   @default("USER")
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
