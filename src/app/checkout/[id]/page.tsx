@@ -1,31 +1,31 @@
 import prisma from "@/lib/db";
 import CheckoutContent from "./checkoutContent";
 
-export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }){
+export default async function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const cart=await prisma.cart.findUnique({
-        where:{
-            id:parseInt(id)
+    const cart = await prisma.cart.findUnique({
+        where: {
+            id: parseInt(id)
         },
-        include:{
-            CartItem:{
-                include:{
-                    Products:{
-                        select:{
-                            id:true,
-                            name:true,
-                            price:true,
-                            img:true,
-                            category:true,
-                            isInStock:true,
-                            brand:true,
-                            created_at:true
+        include: {
+            CartItem: {
+                include: {
+                    Products: {
+                        select: {
+                            id: true,
+                            name: true,
+                            price: true,
+                            img: true,
+                            category: true,
+                            isInStock: true,
+                            brand: true,
+                            created_at: true
                         }
                     }
                 }
             }
         }
-    })    
+    })
     const serializedCart = cart ? {
         ...cart,
         totalPrice: cart.totalPrice.toNumber(),
@@ -39,7 +39,7 @@ export default async function CheckoutPage({ params }: { params: Promise<{ id: s
     } : null;
     return (
         <div>
-            <CheckoutContent cart={serializedCart}/>
+            <CheckoutContent cart={serializedCart} />
         </div>
     )
 

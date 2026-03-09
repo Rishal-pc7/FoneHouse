@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 
+
 interface CartItemClientProps {
     item: {
         id: number;
@@ -30,7 +31,7 @@ export function CartItemClient({ item, quantity, onUpdateQuantity, onRemoveClick
                     alt={item.Products.name}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 640px) 100vw, 150px"
+                    sizes="(max-width: 768px) 100px, 120px"
                     priority={priority}
                 />
             </div>

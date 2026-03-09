@@ -30,6 +30,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "lucide-ext.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

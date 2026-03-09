@@ -71,25 +71,25 @@ export default async function SuccessPage({ params }: { params: Promise<{ orderI
 
                     <div className="space-y-3">
                         {isFailed ? (
-                            <Link href={`/checkout/${order.cartId}`} className="block">
-                                <Button className="w-full h-12 rounded-xl text-base font-semibold bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20">
+                            <Button asChild className="w-full h-12 rounded-xl text-base font-semibold bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20">
+                                <Link href={`/checkout/${order.cartId}`} className="block">
                                     Try Payment Again
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         ) : (
-                            <Link href="/shop" className="block">
-                                <Button className="w-full h-12 rounded-xl text-base font-semibold bg-brandBlue hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/20">
+                            <Button asChild className="w-full h-12 rounded-xl text-base font-semibold bg-brandBlue hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/20">
+                                <Link href="/shop" className="block">
                                     Continue Shopping
                                     <ArrowRight className="ml-2 w-4 h-4" />
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                         )}
 
-                        <Link href="/" className="block">
-                            <Button variant="ghost" className="w-full h-12 rounded-xl text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800">
+                        <Button asChild variant="ghost" className="w-full h-12 rounded-xl text-base text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-zinc-800">
+                            <Link href="/" className="block">
                                 Return to Home
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
                 </CardContent>
             </Card>

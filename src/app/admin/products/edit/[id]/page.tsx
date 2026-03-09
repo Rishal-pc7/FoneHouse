@@ -1,80 +1,42 @@
-'use client'
+import EditProductForm from './_components/EditProductForm.client'
+import db from '@/lib/db'
+import { notFound } from 'next/navigation'
+import { ProductFormData } from '../../products.types'
 
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
-import { motion } from 'framer-motion'
-import { Upload } from 'lucide-react'
-import SpecsEditor from '@/components/admin/SpecsEditor'
-import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+export const dynamic = 'force-dynamic';
 
-// Define the validation schema
-const productSchema = z.object({
-    name: z.string().min(1, 'Product name is required'),
-    description: z.string().min(10, 'Description must be at least 10 characters').optional(),
-    price: z.number().min(0.01, 'Price must be greater than 0'),
-    category: z.string().min(1, 'Category is required'),
-    brand: z.string().min(1, 'Brand is required'),
-    stock: z.number().int().min(0, 'Stock cannot be negative'),
-    isInStock: z.boolean(),
-    img: z.string().url('Invalid image URL').optional().or(z.literal('')),
-    specifications: z.union([z.record(z.string(), z.string()), z.array(z.string())]).optional(),
-})
+interface PageProps {
+    params: Promise<{ id: string }>
+}
 
-type ProductFormData = z.infer<typeof productSchema>
+export default async function EditProductPage({ params }: PageProps) {
+    const { id } = await params;
+    const productId = parseInt(id, 10);
 
-export default function EditProductPage() {
-    const router = useRouter()
-    const params = useParams()
-    const id = params.id as string
-    const [product, setProduct] = useState<ProductFormData | null>(null)
-    const {
-        register,
-        handleSubmit,
-        control,
-        formState: { errors, isSubmitting },
-        reset,
-        watch
-    } = useForm<ProductFormData>({
-        resolver: zodResolver(productSchema),
-        defaultValues: {
-            isInStock: true
-        }
-    })
-
-    useEffect(() => {
-        if (id) {
-            const fetchProduct = async () => {
-                try {
-                    const response = await fetch(`/api/updateProduct/${id}`)
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch product")
-                    }
-                    const data = await response.json()
-                    // Use reset to populate the form
-                    reset(data.data)
-                } catch (error) {
-                    console.error("Error fetching product:", error)
-                }
-            }
-            fetchProduct()
-        }
-    }, [id, reset])
-
-    const onSubmit = async (data: ProductFormData) => {
-        const response = await fetch(`/api/updateProduct/${id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        if (!response.ok) {
-            throw new Error("Failed to update product")
-        }
-        router.push("/admin/products")
+    if (isNaN(productId)) {
+        return notFound();
     }
+
+    const product = await db.products.findUnique({
+        where: { id: productId }
+    });
+
+    if (!product) {
+        return notFound();
+    }
+
+    const initialData: ProductFormData = {
+        name: product.name,
+        description: product.description || '',
+        price: product.price.toNumber(),
+        category: product.category,
+        brand: product.brand,
+        stock: product.stock,
+        isInStock: product.isInStock,
+        img: product.img,
+        images: product.images,
+        specifications: product.specifications as any
+    };
 
     return (
         <div className="max-w-2xl mx-auto">
@@ -85,204 +47,7 @@ export default function EditProductPage() {
                 </p>
             </div>
 
-            <motion.form
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-zinc-900 p-4 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 space-y-6"
-                onSubmit={handleSubmit(onSubmit)}
-            >
-                <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white border-b pb-2 border-gray-100 dark:border-zinc-800">Basic Information</h2>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Product Name
-                        </label>
-                        <input
-                            {...register('name')}
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                            placeholder="e.g. iPhone 15 Pro Max"
-                        />
-                        {errors.name && (
-                            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Description
-                        </label>
-                        <textarea
-                            {...register('description')}
-                            rows={4}
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.description ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                            placeholder="Detailed product description..."
-                        />
-                        {errors.description && (
-                            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
-                        )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Price (SAR)
-                            </label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                {...register('price', { valueAsNumber: true })}
-                                className={`w-full px-4 py-3 rounded-lg border ${errors.price ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                    } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                                placeholder="0.00"
-                            />
-                            {errors.price && (
-                                <p className="text-red-500 text-sm mt-1">{errors.price.message}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Stock Quantity
-                            </label>
-                            <div className="space-y-3">
-                                <input
-                                    type="number"
-                                    {...register('stock', { valueAsNumber: true })}
-                                    className={`w-full px-4 py-3 rounded-lg border ${errors.stock ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                        } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                                    placeholder="0"
-                                />
-                                <div className="flex items-center gap-2">
-                                    <input
-                                        type="checkbox"
-                                        id="isInStock"
-                                        {...register('isInStock')}
-                                        className="w-4 h-4 text-brandBlue border-gray-300 rounded focus:ring-brandBlue dark:border-zinc-700 dark:bg-zinc-800"
-                                    />
-                                    <label htmlFor="isInStock" className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                                        Mark as In Stock
-                                    </label>
-                                </div>
-                            </div>
-                            {errors.stock && (
-                                <p className="text-red-500 text-sm mt-1">{errors.stock.message}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Category
-                            </label>
-                            <select
-                                {...register('category')}
-                                className={`w-full px-4 py-3 rounded-lg border ${errors.category ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                    } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all appearance-none`}
-                            >
-                                <option value="">Select Category</option>
-                                <option value="Mobile Phones">Mobile Phones</option>
-                                <option value="Accessories">Accessories</option>
-                                <option value="Spare Parts">Spare Parts</option>
-                            </select>
-                            {errors.category && (
-                                <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
-                            )}
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Brand
-                            </label>
-                            <select
-                                {...register('brand')}
-                                className={`w-full px-4 py-3 rounded-lg border ${errors.brand ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                    } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all appearance-none`}
-                            >
-                                <option value="">Select Brand</option>
-                                <option value="Apple">Apple</option>
-                                <option value="Samsung">Samsung</option>
-                                <option value="Xiaomi">Xiaomi</option>
-                                <option value="Google">Google</option>
-                                <option value="Huawei">Huawei</option>
-                            </select>
-                            {errors.brand && (
-                                <p className="text-red-500 text-sm mt-1">{errors.brand.message}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Image URL
-                        </label>
-                        <div className="relative">
-                            <input
-                                {...register('img')}
-                                className={`w-full px-4 py-3 pl-10 rounded-lg border ${errors.img ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
-                                    } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
-                                placeholder="https://example.com/image.jpg"
-                            />
-                            <Upload className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
-                        </div>
-
-                        {/* Image Preview */}
-                        {
-                            watch('img') && (
-                                <div className="mt-4 relative aspect-video w-full overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-700">
-                                    <img
-                                        src={watch('img') || ''}
-                                        alt="Product preview"
-                                        className="object-cover w-full h-full"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none'
-                                        }}
-                                    />
-                                </div>
-                            )
-                        }
-
-
-                        {errors.img && (
-                            <p className="text-red-500 text-sm mt-1">{errors.img.message}</p>
-                        )}
-                    </div>
-                </div>
-
-                <div className="space-y-4 pt-6 border-t border-gray-100 dark:border-zinc-800">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Specifications</h2>
-                    <div className="bg-gray-50 dark:bg-zinc-800/30 p-1 rounded-2xl border border-gray-100 dark:border-zinc-800">
-                        <Controller
-                            name="specifications"
-                            control={control}
-                            render={({ field }) => (
-                                <SpecsEditor
-                                    onChange={field.onChange}
-                                    initialData={field.value}
-                                />
-                            )}
-                        />
-                    </div>
-                </div>
-
-                <div className="pt-4">
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full bg-brandBlue text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                        {isSubmitting ? (
-                            <>
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span>Updating Product...</span>
-                            </>
-                        ) : (
-                            'Update Product'
-                        )}
-                    </button>
-                </div>
-            </motion.form>
+            <EditProductForm id={productId} initialData={initialData} />
         </div>
     )
 }

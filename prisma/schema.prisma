@@ -73,6 +73,7 @@ model Products {
   price          Decimal
   category       String
   img            String
+  images         String[]   @default([])
   description    String?
   specifications Json?
   created_at     DateTime   @default(now())

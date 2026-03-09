@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle, CreditCard, Loader2, MapPin, Truck, ShieldCheck } from 'lucide-react';
 
+
 import { Button } from '@/components/ui/button';
 import {
     Form,
@@ -298,12 +299,13 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
                                         {cart?.CartItem?.map((item) => (
                                             <div key={item.id} className="flex gap-4">
                                                 <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-100 dark:border-zinc-800">
-                                                    <Image
-                                                        src={item.Products.img}
-                                                        alt={item.Products.name}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
+                                                    {item.Products.img ? (
+                                                        <Image src={item.Products.img} alt={item.Products.name} fill className="object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                                                            <span className="text-gray-400 text-xs">No image</span>
+                                                        </div>
+                                                    )}
                                                     <div className="absolute bottom-0 right-0 bg-gray-900 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-tl-lg">
                                                         x{item.quantity}
                                                     </div>

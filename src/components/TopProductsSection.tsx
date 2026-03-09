@@ -7,6 +7,7 @@ import AddToCartButton from './AddToCartButton';
 import prisma from '@/lib/db';
 import { Decimal, JsonValue } from '@prisma/client/runtime/client';
 
+
 interface Product {
     id: number;
     name: string;
@@ -23,11 +24,24 @@ interface Product {
 
 
 export default async function TopProductsSection() {
-    const topProducts: Product[] = await prisma.products.findMany({
+    const productsRes = await prisma.products.findMany({
         orderBy: {
             created_at: 'desc',
         },
     });
+    const topProducts: Product[] = productsRes.map(p => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        price: p.price,
+        brand: p.brand,
+        stock: p.stock,
+        isInStock: p.isInStock,
+        category: p.category,
+        img: p.img || '',
+        created_at: p.created_at,
+        specifications: p.specifications
+    }));
     return (
         <section className="py-20 md:py-28 bg-gray-50 dark:bg-zinc-950">
             <div className="w-full px-4 md:px-10 max-w-[1440px] mx-auto">

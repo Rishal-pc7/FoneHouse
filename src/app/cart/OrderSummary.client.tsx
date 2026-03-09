@@ -41,11 +41,12 @@ export function OrderSummaryClient({ totalPrice, cartId }: OrderSummaryClientPro
                 </div>
             </div>
 
-            <Link href={`/checkout/${cartId}`} onClick={() => setIsCheckingOut(true)}>
-                <Button
-                    className="w-full h-14 text-lg font-bold rounded-xl bg-brandBlue hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/20 group"
-                    disabled={isCheckingOut}
-                >
+            <Button
+                asChild
+                className="w-full h-14 text-lg font-bold rounded-xl bg-brandBlue hover:bg-brandBlue/90 shadow-lg shadow-brandBlue/20 group"
+                disabled={isCheckingOut}
+            >
+                <Link href={`/checkout/${cartId}`} onClick={() => setIsCheckingOut(true)}>
                     {isCheckingOut ? (
                         <>
                             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -57,8 +58,8 @@ export function OrderSummaryClient({ totalPrice, cartId }: OrderSummaryClientPro
                             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                         </>
                     )}
-                </Button>
-            </Link>
+                </Link>
+            </Button>
 
             <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500 dark:text-gray-400">

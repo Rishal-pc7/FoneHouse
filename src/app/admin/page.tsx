@@ -1,15 +1,14 @@
-'use client'
-
 import React from 'react'
-import { motion } from 'framer-motion'
-import { Users, DollarSign, ShoppingBag, Activity } from 'lucide-react'
+import DollarSign from 'lucide-react/dist/esm/icons/dollar-sign';
+import Users from 'lucide-react/dist/esm/icons/users';
+import ShoppingBag from 'lucide-react/dist/esm/icons/shopping-bag';
+import Activity from 'lucide-react/dist/esm/icons/activity';
 
-// Dummy data for the dashboard
 const stats = [
-    { name: 'Total Revenue', value: '$45,231.89', change: '+20.1%', icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Active Users', value: '+2,350', change: '+180.1%', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { name: 'Sales', value: '+12,234', change: '+19%', icon: ShoppingBag, color: 'text-violet-500', bg: 'bg-violet-500/10' },
-    { name: 'Active Now', value: '+573', change: '+201', icon: Activity, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { name: 'Total Revenue', value: 'SAR 45,231', change: '+20.1%', icon: DollarSign, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { name: 'Active Users', value: '2,350', change: '+180.1%', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { name: 'Sales', value: '12,234', change: '+19%', icon: ShoppingBag, color: 'text-violet-500', bg: 'bg-violet-500/10' },
+    { name: 'Active Now', value: '573', change: '+201', icon: Activity, color: 'text-amber-500', bg: 'bg-amber-500/10' },
 ]
 
 export default function AdminDashboard() {
@@ -21,14 +20,8 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, i) => (
-                    <motion.div
-                        key={stat.name}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800"
-                    >
+                {stats.map((stat) => (
+                    <div key={stat.name} className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800">
                         <div className="flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{stat.name}</p>
@@ -42,33 +35,19 @@ export default function AdminDashboard() {
                             <span className="text-emerald-500 font-medium">{stat.change}</span>
                             <span className="text-gray-400 ml-2">from last month</span>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 h-96"
-                >
+                <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 h-64">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
-                    <div className="flex items-center justify-center h-full text-gray-400">
-                        Placeholder Chart or List
-                    </div>
-                </motion.div>
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 h-96"
-                >
+                    <div className="flex items-center justify-center h-full text-gray-400">Coming soon</div>
+                </div>
+                <div className="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 h-64">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Top Products</h3>
-                    <div className="flex items-center justify-center h-full text-gray-400">
-                        Placeholder List
-                    </div>
-                </motion.div>
+                    <div className="flex items-center justify-center h-full text-gray-400">Coming soon</div>
+                </div>
             </div>
         </div>
     )

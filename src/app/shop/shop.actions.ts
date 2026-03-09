@@ -8,9 +8,11 @@ export async function getProducts(): Promise<Product[]> {
         orderBy: { created_at: "desc" },
     });
 
-    return rows.map((p) => ({
-        ...p,
-        price: p.price.toNumber(),
-        created_at: p.created_at.toISOString(),
-    }));
+    const products = rows.map((p) => {
+        return {
+            ...p,
+            price: p.price.toNumber(),
+        };
+    });
+    return products;
 }

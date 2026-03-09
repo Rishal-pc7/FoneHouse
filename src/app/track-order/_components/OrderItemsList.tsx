@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import type { OrderItem } from "./types";
 import { Package } from "lucide-react";
 
+
 type Props = { items: OrderItem[] };
 
 export default function OrderItemsList({ items }: Props) {

@@ -36,12 +36,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                     {/* Left Column - Image Gallery */}
                     <div className="space-y-6 lg:sticky lg:top-24 h-fit">
                         <ProductGallery
-                            images={[
-                                product.img,
-                                // Mock additional images for UI demonstration
-                                'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1000',
-                                'https://images.unsplash.com/photo-1505156868547-9b49f4df4e04?q=80&w=1000'
-                            ]}
+                            images={(() => {
+                                if (product.img && product.img.startsWith('[')) {
+                                    try {
+                                        return JSON.parse(product.img);
+                                    } catch (e) { }
+                                }
+                                return [product.img].concat(product.images)
+                            })()}
                             productName={product.name}
                             isOutOfStock={isOutOfStock}
                         />
