@@ -35,18 +35,32 @@ export default function ProductGrid({ products }: Props) {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedBrand, setSelectedBrand] = useState("");
     const [specSearch, setSpecSearch] = useState("");
+    const [visibleCount, setVisibleCount] = useState(12);
 
     const categories = Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
     const brands = Array.from(new Set(products.map((p) => p.brand))).filter(Boolean);
 
     const filtered = filterProducts(products, searchQuery, selectedCategory, selectedBrand, specSearch);
 
+    // reset pagination when filters change
+    const onSearchChange = (val: string) => { setSearchQuery(val); setVisibleCount(12); };
+    const onCategoryChange = (val: string) => { setSelectedCategory(val); setVisibleCount(12); };
+    const onBrandChange = (val: string) => { setSelectedBrand(val); setVisibleCount(12); };
+    const onSpecChange = (val: string) => { setSpecSearch(val); setVisibleCount(12); };
+
     const clearAll = () => {
         setSearchQuery("");
         setSelectedCategory("");
         setSelectedBrand("");
         setSpecSearch("");
+        setVisibleCount(12);
     };
+
+    const loadMore = () => {
+        setVisibleCount(prev => prev + 12);
+    };
+
+    const visibleProducts = filtered.slice(0, visibleCount);
 
     return (
         <div className="container mx-auto px-4 py-16">
@@ -57,22 +71,32 @@ export default function ProductGrid({ products }: Props) {
                 selectedBrand={selectedBrand}
                 categories={categories}
                 brands={brands}
-                onSearch={setSearchQuery}
-                onSpec={setSpecSearch}
-                onCategory={setSelectedCategory}
-                onBrand={setSelectedBrand}
+                onSearch={onSearchChange}
+                onSpec={onSpecChange}
+                onCategory={onCategoryChange}
+                onBrand={onBrandChange}
                 onClear={clearAll}
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 relative z-10">
-                {filtered.map((product, i) => (
+                {visibleProducts.map((product) => (
                     <ProductCard
                         key={product.id}
                         product={product}
-                        animationDelay={(i % 8) * 100}
                     />
                 ))}
             </div>
+
+            {visibleCount < filtered.length && (
+                <div className="mt-12 flex justify-center">
+                    <button
+                        onClick={loadMore}
+                        className="px-8 py-3 rounded-full bg-zinc-900 border border-zinc-800 text-sm font-medium text-white hover:bg-zinc-800 hover:border-zinc-700 transition-colors"
+                    >
+                        Load More
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

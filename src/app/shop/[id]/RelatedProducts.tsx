@@ -23,11 +23,10 @@ export default async function RelatedProducts({ category, currentProductId }: Re
                 You might also like
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 content-stretch items-stretch">
-                {relatedProducts.map((product, index) => (
+                {relatedProducts.map((product) => (
                     <ProductCard
                         key={product.id}
                         product={product}
-                        animationDelay={index * 100}
                     />
                 ))}
             </div>
