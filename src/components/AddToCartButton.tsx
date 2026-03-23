@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface AddToCartButtonProps {
     productId: number;
@@ -12,24 +13,23 @@ interface AddToCartButtonProps {
     price: number;
 }
 
-export default function AddToCartButton({ productId, className, isOutOfStock,price }: AddToCartButtonProps) {
-    const { setCount } = useCart();
+export default function AddToCartButton({ productId, className, isOutOfStock, price }: AddToCartButtonProps) {
+    const { setCount} = useCart();
+    const router = useRouter();
     const addToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        setCount((prev) => prev + 1);
+        setCount(prev => prev + 1);
         const response = await fetch("/api/cart/addToCart", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ productId,price })
-        })
-        if (!response.ok) {
-            throw new Error("Failed to add product to cart")
-        }
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId, price })
+        });
+        if (!response.ok) throw new Error("Failed to add product to cart");
         const data = await response.json();
+        router.refresh();
         localStorage.setItem('cartCount', data.data.totalItems.toString());
+        setCount(data.data.totalItems);
     };
 
     return (
@@ -46,7 +46,9 @@ export default function AddToCartButton({ productId, className, isOutOfStock,pri
             onClick={addToCart}
         >
             <ShoppingCart size={16} className="mr-2" />
-            <span className="hidden md:inline">{isOutOfStock ? 'Sold Out' : 'Add'}</span>
+            <span className="hidden md:inline">
+                {isOutOfStock ? 'Sold Out' : 'Add'}
+            </span>
         </Button>
     );
 }

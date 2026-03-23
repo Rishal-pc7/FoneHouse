@@ -5,9 +5,9 @@ import { EmptyCart } from './EmptyCart';
 export default async function CartPage() {
     const cart = await getCart();
 
-    if (!cart || cart.CartItem.length === 0) {
-        return <EmptyCart />;
-    }
-
-    return <CartContent cart={cart} />;
+    return (
+            (!cart || cart.CartItem.length === 0) ? <EmptyCart />
+                : <CartContent cart={cart} />
+            
+    );
 }

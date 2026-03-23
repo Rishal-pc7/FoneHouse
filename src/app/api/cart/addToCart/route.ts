@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import prisma from "@/lib/db";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
         const cookieStore = await cookies();
         const session = await auth()
         let sessionId = cookieStore.get('session_id')?.value;
-        const userId = session?.user.id
+        const userId = session?.user?.id
         let cart = null
         if (!sessionId && !userId) {
             sessionId = crypto.randomUUID();
@@ -68,8 +69,9 @@ export async function POST(req: NextRequest) {
                 totalItems: cart.totalItems + 1
             }
         })
+        revalidatePath('/cart');
         return NextResponse.json(
-            { message: "Product added to cart", data:{totalPrice:updatedCart.totalPrice.toNumber(),totalItems:updatedCart.totalItems } },
+            { message: "Product added to cart", data: { totalPrice: updatedCart.totalPrice.toNumber(), totalItems: updatedCart.totalItems } },
             { status: 200 }
         )
 

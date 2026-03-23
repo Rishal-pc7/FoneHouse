@@ -2,6 +2,7 @@
 
 import { auth } from '@/auth';
 import prisma from '@/lib/db';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 export async function getCart() {
     const cookieStore = await cookies();
@@ -71,4 +72,7 @@ export async function getCart() {
             },
         })),
     };
+}
+export async function revalidateCart() {
+    revalidatePath("/cart");
 }
