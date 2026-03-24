@@ -5,7 +5,6 @@ import prisma from "@/lib/db";
 export type DashboardStatDto = {
   name: string;
   value: string;
-  change: string;
   iconName: "DollarSign" | "Users" | "ShoppingBag" | "Activity";
   color: string;
   bg: string;
@@ -22,11 +21,13 @@ export async function getDashboardStats(): Promise<DashboardStatDto[]> {
     _count: {
       id: true,
     },
+    
   });
 
+
   return [
-    { name: 'Total Revenue', value: `SAR ${new Intl.NumberFormat("en-SA").format(orderMetrics._sum.totalPrice?.toNumber()||0)}`, change: '+20.1%', iconName: 'DollarSign', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { name: 'Sales', value: new Intl.NumberFormat("en-SA").format(orderMetrics._count.id||0), change: '+19%', iconName: 'ShoppingBag', color: 'text-violet-500', bg: 'bg-violet-500/10' },
+    { name: 'Total Revenue', value: `SAR ${new Intl.NumberFormat("en-SA").format(orderMetrics._sum.totalPrice?.toNumber()||0)}`, iconName: 'DollarSign', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    { name: 'Sales', value: new Intl.NumberFormat("en-SA").format(orderMetrics._count.id||0), iconName: 'ShoppingBag', color: 'text-violet-500', bg: 'bg-violet-500/10' },
   ];
 }
 

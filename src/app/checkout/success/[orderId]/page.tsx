@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle2, XCircle, Package, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Package,  ArrowRight, MessageCircle } from 'lucide-react';
+import { ClearStorage } from './ClearStorage';
 
 export default async function SuccessPage({ params }: { params: Promise<{ orderId: string }> }) {
     const { orderId } = await params;
@@ -44,6 +45,7 @@ export default async function SuccessPage({ params }: { params: Promise<{ orderI
 
                     {!isFailed && (
                         <>
+                            <ClearStorage />
                             <div className="bg-gray-50 dark:bg-zinc-800 rounded-xl p-4 mb-8 text-left border border-gray-200 dark:border-zinc-700">
                                 <div className="flex justify-between items-center mb-4 pb-4 border-b border-gray-200 dark:border-zinc-700">
                                     <span className="text-sm text-gray-500 dark:text-gray-400">Order Number</span>

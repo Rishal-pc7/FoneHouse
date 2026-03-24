@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
       console.log(`❌ Payment failed or pending for Order: ${body.order_no}`);
       const orderIdString = body.order_no;
       const orderId = parseInt(orderIdString.replace("ORD-", ""), 10);
-
+      
       if (orderId) {
-        await prisma.orders.update({
-          where: { id: orderId },
-          data: { status: 'PENDING' }
-        });
+          await prisma.orders.update({
+            where: { id: orderId },
+            data: { status: 'FAILED' }
+          });
       }
     }
 

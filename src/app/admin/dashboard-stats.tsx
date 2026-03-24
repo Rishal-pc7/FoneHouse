@@ -27,10 +27,7 @@ export default function DashboardStats({ stats }: { stats: DashboardStatDto[] })
                 <Icon className="w-6 h-6" />
               </div>
             </div>
-            <div className="mt-4 flex items-center text-sm">
-              <span className="text-emerald-500 font-medium">{stat.change}</span>
-              <span className="text-gray-400 ml-2">from last month</span>
-            </div>
+            
           </div>
         );
       })}
