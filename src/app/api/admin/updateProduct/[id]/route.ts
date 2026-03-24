@@ -35,6 +35,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         const brand = formData.get('brand') as string;
         const stock = parseInt(formData.get('stock') as string);
         const isInStock = formData.get('isInStock') === 'true';
+        const warrantyYears = parseInt(formData.get('warrantyYears') as string) || 1;
+        const shipping = formData.get('shipping') as string || 'FREE';
         const specificationsString = formData.get('specifications') as string | null;
         const specifications = specificationsString ? JSON.parse(specificationsString) : undefined;
 
@@ -77,6 +79,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
                 brand,
                 stock,
                 isInStock,
+                warrantyYears,
+                shipping,
                 img: mainImage,
                 images: additionalImages,
                 specifications

@@ -14,6 +14,8 @@ export type Product = {
     images: string[];
     created_at: Date;
     specifications: JsonValue;
+    warrantyYears: number;
+    shipping: string;
 };
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -64,6 +66,8 @@ export const productSchema = z.object({
             { message: 'Only .jpg, .jpeg, .png and .webp formats are supported.' }
         ).optional(),
     specifications: z.union([z.record(z.string(), z.string()), z.array(z.string())]).nullish(),
+    warrantyYears: z.number().int().min(0, 'Warranty cannot be negative'),
+    shipping: z.enum(['FREE', 'PAID']),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;

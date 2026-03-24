@@ -19,7 +19,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     }
 
     const isOutOfStock = !product.isInStock || product.stock <= 0;
-
+    
     return (
         <main className="min-h-screen bg-white dark:bg-zinc-950 pb-20">
             {/* Breadcrumb / Back Navigation */}

@@ -30,7 +30,7 @@ export default function EditProductForm({ id, initialData }: Props) {
         watch,
         setValue
     } = useForm<ProductFormData>({
-        resolver: zodResolver(productSchema),
+        resolver: zodResolver(productSchema) as any,
         defaultValues: initialData
     })
 
@@ -84,6 +84,8 @@ export default function EditProductForm({ id, initialData }: Props) {
             formData.append('brand', validatedData.brand);
             formData.append('stock', validatedData.stock.toString());
             formData.append('isInStock', validatedData.isInStock.toString());
+            formData.append('warrantyYears', validatedData.warrantyYears.toString());
+            formData.append('shipping', validatedData.shipping);
 
             if (validatedData.specifications) {
                 formData.append('specifications', JSON.stringify(validatedData.specifications));
@@ -128,7 +130,7 @@ export default function EditProductForm({ id, initialData }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white dark:bg-zinc-900 p-4 sm:p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-zinc-800 space-y-6"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit as any)}
         >
             <div className="space-y-4">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white border-b pb-2 border-gray-100 dark:border-zinc-800">Basic Information</h2>
@@ -223,6 +225,32 @@ export default function EditProductForm({ id, initialData }: Props) {
                             <option value="Huawei">Huawei</option>
                         </select>
                         {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand.message}</p>}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Warranty (Years)</label>
+                        <input
+                            type="number"
+                            {...register('warrantyYears', { valueAsNumber: true })}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.warrantyYears ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
+                            placeholder="1"
+                        />
+                        {errors.warrantyYears && <p className="text-red-500 text-sm mt-1">{errors.warrantyYears.message}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Shipping Option</label>
+                        <select
+                            {...register('shipping')}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.shipping ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all appearance-none`}
+                        >
+                            <option value="FREE">Free Shipping</option>
+                            <option value="PAID">Paid Shipping</option>
+                        </select>
+                        {errors.shipping && <p className="text-red-500 text-sm mt-1">{errors.shipping.message}</p>}
                     </div>
                 </div>
 

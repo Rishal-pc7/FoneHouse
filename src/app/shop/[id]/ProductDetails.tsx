@@ -9,6 +9,8 @@ interface ProductDetailsProps {
         description: any;
         price: any;
         specifications: any;
+        warrantyYears?: number;
+        shipping?: string;
     };
     isOutOfStock: boolean;
 }
@@ -55,11 +57,18 @@ export default function ProductDetails({ product, isOutOfStock }: ProductDetails
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-zinc-900/50 p-6 rounded-2xl">
                 <div className="flex items-center gap-3">
                     <ShieldCheck className="text-brandBlue" size={20} />
-                    <span>2 Year Warranty</span>
+                    <span>
+                        {product.warrantyYears && product.warrantyYears > 0 
+                            ? `${product.warrantyYears} Year${product.warrantyYears > 1 ? 's' : ''} Warranty` 
+                            : 'No Warranty'}
+                    </span>
                 </div>
+                
                 <div className="flex items-center gap-3">
                     <Truck className="text-brandBlue" size={20} />
-                    <span>Free Delivery</span>
+                    <span>
+                        {product.shipping === 'PAID' ? 'Standard Delivery' : 'Free Delivery'}
+                    </span>
                 </div>
                 <div className="flex items-center gap-3">
                     <Check className="text-brandBlue" size={20} />

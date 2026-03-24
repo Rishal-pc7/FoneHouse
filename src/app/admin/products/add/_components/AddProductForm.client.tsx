@@ -1,6 +1,6 @@
 'use client'
 
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import Upload from 'lucide-react/dist/esm/icons/upload';
@@ -27,11 +27,13 @@ export default function AddProductForm() {
     } = useForm<ProductFormData>({
         resolver: zodResolver(productSchema),
         defaultValues: {
-            isInStock: true
+            isInStock: true,
+            warrantyYears: 1,
+            shipping: 'FREE',
         }
     })
 
-    const onSubmit = async (data: ProductFormData) => {
+    const onSubmit: SubmitHandler<ProductFormData> = async (data) => {
         try {
             const validatedData = productSchema.parse(data)
 
@@ -45,6 +47,8 @@ export default function AddProductForm() {
             formData.append('brand', validatedData.brand);
             formData.append('stock', validatedData.stock.toString());
             formData.append('isInStock', validatedData.isInStock.toString());
+            formData.append('warrantyYears', validatedData.warrantyYears.toString());
+            formData.append('shipping', validatedData.shipping);
 
             if (validatedData.specifications) {
                 formData.append('specifications', JSON.stringify(validatedData.specifications));
@@ -189,6 +193,32 @@ export default function AddProductForm() {
                             <option value="Huawei">Huawei</option>
                         </select>
                         {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand.message}</p>}
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Warranty (Years)</label>
+                        <input
+                            type="number"
+                            {...register('warrantyYears', { valueAsNumber: true })}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.warrantyYears ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all`}
+                            placeholder="1"
+                        />
+                        {errors.warrantyYears && <p className="text-red-500 text-sm mt-1">{errors.warrantyYears.message}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Shipping Option</label>
+                        <select
+                            {...register('shipping')}
+                            className={`w-full px-4 py-3 rounded-lg border ${errors.shipping ? 'border-red-500' : 'border-gray-200 dark:border-zinc-700'
+                                } bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-brandBlue outline-none transition-all appearance-none`}
+                        >
+                            <option value="FREE">Free Shipping</option>
+                            <option value="PAID">Paid Shipping</option>
+                        </select>
+                        {errors.shipping && <p className="text-red-500 text-sm mt-1">{errors.shipping.message}</p>}
                     </div>
                 </div>
 

@@ -8,17 +8,16 @@ datasource db {
 }
 
 model Cart {
-  id        Int        @id @default(autoincrement())
-  userId    Int?       @unique
-  sessionId String?    @unique
-  updatedAt DateTime   @default(now())
-  createdAt DateTime   @default(now())
+  id         Int        @id @default(autoincrement())
+  userId     Int?       @unique
+  sessionId  String?    @unique
+  updatedAt  DateTime   @default(now())
+  createdAt  DateTime   @default(now())
   totalPrice Decimal
   totalItems Int
-  
-  Users     Users?     @relation(fields: [userId], references: [id])
-  CartItem  CartItem[]
-  Orders    Orders[]
+  Users      Users?     @relation(fields: [userId], references: [id])
+  CartItem   CartItem[]
+  Orders     Orders[]
 
   @@index([sessionId])
 }
@@ -35,65 +34,69 @@ model CartItem {
 }
 
 model Orders {
-  id           Int      @id @default(autoincrement())
-  userId       Int?
-  sessionId    String?
-  totalPrice   Decimal
-  cartId       Int
-  status       String   @default("PENDING")
-  email        String
-  firstName    String
-  lastName     String
-  address      String
-  city         String
-  postalCode   String
-  phone        String
+  id            Int         @id @default(autoincrement())
+  userId        Int?
+  sessionId     String?
+  totalPrice    Decimal
+  cartId        Int
+  status        String      @default("PENDING")
+  email         String
+  firstName     String
+  lastName      String
+  address       String
+  city          String
+  postalCode    String
+  phone         String
   paymentMethod String
-  created_at   DateTime @default(now())
-  updated_at   DateTime @default(now())
-  OrderItem    OrderItem[]
-  Users        Users?   @relation(fields: [userId], references: [id])
-  Cart         Cart     @relation(fields: [cartId], references: [id])
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now())
+  OrderItem     OrderItem[]
+  Cart          Cart        @relation(fields: [cartId], references: [id])
+  Users         Users?      @relation(fields: [userId], references: [id])
 }
-model OrderItem{
+
+model OrderItem {
   id        Int      @id @default(autoincrement())
   orderId   Int
   productId Int
   quantity  Int      @default(1)
-  Orders     Orders     @relation(fields: [orderId], references: [id])
+  Orders    Orders   @relation(fields: [orderId], references: [id])
   Products  Products @relation(fields: [productId], references: [id])
+
   @@unique([orderId, productId])
 }
 
 model Products {
-  id             Int        @id @default(autoincrement())
+  id             Int         @id @default(autoincrement())
   name           String
-  brand          String     @default("Unknown")
-  stock          Int        @default(0)
-  isInStock      Boolean    @default(true)
+  brand          String      @default("Unknown")
+  stock          Int         @default(0)
+  isInStock      Boolean     @default(true)
   price          Decimal
   category       String
   img            String
-  images         String[]   @default([])
+  images         String[]    @default([])
   description    String?
   specifications Json?
-  created_at     DateTime   @default(now())
+  created_at     DateTime    @default(now())
+  shipping       String      @default("FREE")
+  warrantyYears  Int         @default(1)
   CartItem       CartItem[]
   OrderItem      OrderItem[]
 }
 
 model Users {
-  id       Int      @id @default(autoincrement())
-  name     String
-  email    String   @unique
-  password String
-  role     String   @default("USER")
-  Cart     Cart?
-  Orders   Orders[]
-  Session  Session?
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  role       String   @default("USER")
   created_at DateTime @default(now())
-
+  Cart       Cart?
+  Orders     Orders[]
+  Session    Session?
 }
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
