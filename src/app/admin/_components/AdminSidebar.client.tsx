@@ -20,6 +20,7 @@ const navItems = [
     { name: 'Orders', href: '/admin/orders', icon: FileText },
     { name: 'Products', href: '/admin/products', icon: ShoppingBag },
     { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Offers', href: '/admin/offers', icon: FileText },
 ]
 
 function NavLinks({ onClose }: { onClose?: () => void }) {

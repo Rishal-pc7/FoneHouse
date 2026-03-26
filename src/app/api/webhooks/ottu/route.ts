@@ -53,8 +53,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. THE GOLDEN RULE: Always respond with 200 OK immediately.
-    // If you don't, Ottu thinks you died and will keep spamming you.
+    
     return NextResponse.json({ received: true }, { status: 200 });
 
   } catch (error) {

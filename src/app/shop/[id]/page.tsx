@@ -6,17 +6,23 @@ import prisma from '@/lib/db';
 import ProductGallery from './ProductGallery.client';
 import RelatedProducts from './RelatedProducts';
 import ProductDetails from './ProductDetails';
+import ReviewsSection from './_components/ReviewsSection';
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     // Find the product
     const product = await prisma.products.findUnique({
-        where: { id: parseInt(id) }
+        where: { id: parseInt(id) },
+        include:{
+            Review:true
+        }
     })
-
+    
+    
     if (!product) {
         notFound();
     }
+    const serializedProduct = {...product,price:product.price?.toNumber(),rating:product.rating?.toNumber()}
 
     const isOutOfStock = !product.isInStock || product.stock <= 0;
     
@@ -50,8 +56,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                     </div>
 
                     {/* Right Column - Product Details */}
-                    <ProductDetails product={product} isOutOfStock={isOutOfStock} />
+                    <ProductDetails product={serializedProduct} isOutOfStock={isOutOfStock} />
                 </div>
+
+                <ReviewsSection productId={product.id} Review={product.Review} />
             </div>
 
             <RelatedProducts category={product.category} currentProductId={product.id} />

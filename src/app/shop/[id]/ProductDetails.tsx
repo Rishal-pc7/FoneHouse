@@ -7,13 +7,26 @@ interface ProductDetailsProps {
         name: string;
         category: string;
         description: any;
-        price: any;
+        price: number;
         specifications: any;
         warrantyYears?: number;
         shipping?: string;
+        rating: number;
+        reviewCount: number;
+        Review: Review[];
     };
     isOutOfStock: boolean;
 }
+
+type Review = {
+    id: number;
+    rating: number;
+    comment: string | null;
+    productId: number;
+    userId: number;
+    username: string;
+    createdAt: Date;
+};
 
 export default function ProductDetails({ product, isOutOfStock }: ProductDetailsProps) {
     return (
@@ -27,13 +40,24 @@ export default function ProductDetails({ product, isOutOfStock }: ProductDetails
                 </h1>
                 <div className="flex items-center space-x-4 mb-6">
                     <div className="flex text-amber-500">
-                        <Star size={18} fill="currentColor" />
-                        <Star size={18} fill="currentColor" />
-                        <Star size={18} fill="currentColor" />
-                        <Star size={18} fill="currentColor" />
-                        <Star size={18} fill="currentColor" className="text-gray-300 dark:text-zinc-700" />
+                        {[1, 2, 3, 4, 5].map((s) => {
+                            const fillPercentage = Math.max(0, Math.min(100, (Number(product.rating) - s + 1) * 100));
+                            return (
+                                <div key={s} className="relative">
+                                    <Star size={18} className="text-gray-300 dark:text-zinc-700" />
+                                    <div 
+                                        className="absolute top-0 left-0 overflow-hidden text-amber-500" 
+                                        style={{ width: `${fillPercentage}%` }}
+                                    >
+                                        <Star size={18} fill="currentColor" />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
-                    <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">4.8 (120 Reviews)</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+                        {Number(product.rating || 0).toFixed(1)} ({product.reviewCount})
+                    </span>
                 </div>
                 <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
                     {product.description as React.ReactNode}

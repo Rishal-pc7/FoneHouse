@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { LoginInput, LoginSchema } from "../login.types";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { signIn} from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { updateCartSession } from "../login.actions";
 
 const inputVariants = {
@@ -18,6 +18,8 @@ const inputVariants = {
 
 export default function LoginForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('callbackUrl') || '/profile';
     const [focusedField, setFocusedField] = useState<string | null>(null);
     const [serverError, setServerError] = useState<string | null>(null);
     const {
@@ -42,7 +44,7 @@ export default function LoginForm() {
                 setServerError("Invalid email or password");
             } else if (res?.ok) {
                 await updateCartSession();
-                window.location.href = "/profile";
+                window.location.href = callbackUrl;
             }
         } catch (error) {
             setServerError("Unexpected Error occured");

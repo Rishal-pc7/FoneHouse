@@ -12,7 +12,6 @@ function filterProducts(
     search: string,
     category: string,
     brand: string,
-    spec: string,
 ): Product[] {
     return products.filter((p) => {
         const q = search.toLowerCase();
@@ -22,11 +21,7 @@ function filterProducts(
             p.category.toLowerCase().includes(q);
         const matchesCategory = category ? p.category === category : true;
         const matchesBrand = brand ? p.brand === brand : true;
-        const specStr = spec
-            ? (p.specifications ? JSON.stringify(p.specifications).toLowerCase() : "")
-            : "";
-        const matchesSpec = spec ? specStr.includes(spec.toLowerCase()) : true;
-        return matchesSearch && matchesCategory && matchesBrand && matchesSpec;
+        return matchesSearch && matchesCategory && matchesBrand;
     });
 }
 
@@ -34,25 +29,22 @@ export default function ProductGrid({ products }: Props) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedBrand, setSelectedBrand] = useState("");
-    const [specSearch, setSpecSearch] = useState("");
     const [visibleCount, setVisibleCount] = useState(12);
 
     const categories = Array.from(new Set(products.map((p) => p.category))).filter(Boolean);
     const brands = Array.from(new Set(products.map((p) => p.brand))).filter(Boolean);
 
-    const filtered = filterProducts(products, searchQuery, selectedCategory, selectedBrand, specSearch);
+    const filtered = filterProducts(products, searchQuery, selectedCategory, selectedBrand);
 
     // reset pagination when filters change
     const onSearchChange = (val: string) => { setSearchQuery(val); setVisibleCount(12); };
     const onCategoryChange = (val: string) => { setSelectedCategory(val); setVisibleCount(12); };
     const onBrandChange = (val: string) => { setSelectedBrand(val); setVisibleCount(12); };
-    const onSpecChange = (val: string) => { setSpecSearch(val); setVisibleCount(12); };
 
     const clearAll = () => {
         setSearchQuery("");
         setSelectedCategory("");
         setSelectedBrand("");
-        setSpecSearch("");
         setVisibleCount(12);
     };
 
@@ -66,13 +58,11 @@ export default function ProductGrid({ products }: Props) {
         <div className="container mx-auto px-4 py-16">
             <ShopFilters
                 searchQuery={searchQuery}
-                specSearch={specSearch}
                 selectedCategory={selectedCategory}
                 selectedBrand={selectedBrand}
                 categories={categories}
                 brands={brands}
                 onSearch={onSearchChange}
-                onSpec={onSpecChange}
                 onCategory={onCategoryChange}
                 onBrand={onBrandChange}
                 onClear={clearAll}

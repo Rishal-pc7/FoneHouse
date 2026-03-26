@@ -81,8 +81,11 @@ model Products {
   created_at     DateTime    @default(now())
   shipping       String      @default("FREE")
   warrantyYears  Int         @default(1)
+  rating         Decimal     @default(0)
+  reviewCount    Int         @default(0)
   CartItem       CartItem[]
   OrderItem      OrderItem[]
+  Review         Review[]
 }
 
 model Users {
@@ -95,6 +98,7 @@ model Users {
   Cart       Cart?
   Orders     Orders[]
   Session    Session?
+  Review     Review[]
 }
 
 model Session {
@@ -104,4 +108,25 @@ model Session {
   expires      DateTime
   role         String   @default("USER")
   user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Offer {
+  id                 Int      @id @default(autoincrement())
+  couponCode         String   @unique
+  discountPercentage Int
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  productId Int
+  userId    Int
+  username  String
+  createdAt DateTime @default(now())
+  Products  Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

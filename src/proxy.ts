@@ -24,7 +24,7 @@ export default auth((req) => {
             }
         } else if (pathname.startsWith("/profile")) {
             // Must be logged in
-            if (!isLoggedIn) {
+            if (!isLoggedIn || userRole !== "USER") {
                 const loginUrl = new URL("/login", req.nextUrl);
                 loginUrl.searchParams.set("callbackUrl", pathname);
                 return NextResponse.redirect(loginUrl);

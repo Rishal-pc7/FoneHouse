@@ -4,11 +4,9 @@ export type Product = {
     description: string | null;
     price: number;
     img: string;
-    images: string[];
     category: string;
     brand: string;
     stock: number;
     isInStock: boolean;
-    specifications: unknown;
     created_at: Date;
 };

@@ -11,21 +11,19 @@ const SELECT_CLASS = [
 
 type Props = {
     searchQuery: string;
-    specSearch: string;
     selectedCategory: string;
     selectedBrand: string;
     categories: string[];
     brands: string[];
     onSearch: (v: string) => void;
-    onSpec: (v: string) => void;
     onCategory: (v: string) => void;
     onBrand: (v: string) => void;
     onClear: () => void;
 };
 
 export default function ShopFilters({
-    searchQuery, specSearch, selectedCategory, selectedBrand,
-    categories, brands, onSearch, onSpec, onCategory, onBrand, onClear,
+    searchQuery, selectedCategory, selectedBrand,
+    categories, brands, onSearch, onCategory, onBrand, onClear,
 }: Props) {
     return (
         <div className="flex flex-col md:flex-row gap-4 mb-16 items-center justify-between animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
@@ -50,16 +48,6 @@ export default function ShopFilters({
             </div>
 
             <div className="flex gap-3 w-full md:w-auto flex-wrap md:flex-nowrap">
-                <div className="flex-1 min-w-[140px] md:flex-none relative h-14 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden focus-within:border-brandBlue focus-within:ring-1 focus-within:ring-brandBlue transition-all">
-                    <input
-                        type="text"
-                        placeholder="Specs (e.g. 256GB)"
-                        value={specSearch}
-                        onChange={(e) => onSpec(e.target.value)}
-                        className="w-full h-full bg-transparent px-4 text-zinc-300 placeholder:text-zinc-500 outline-none text-sm"
-                    />
-                </div>
-
                 <select value={selectedCategory} onChange={(e) => onCategory(e.target.value)} className={SELECT_CLASS}>
                     <option value="">All Categories</option>
                     {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
