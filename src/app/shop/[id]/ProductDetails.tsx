@@ -77,7 +77,6 @@ export default function ProductDetails({ product, isOutOfStock }: ProductDetails
                 </div>
             </div>
 
-            {/* Value Props */}
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-zinc-900/50 p-6 rounded-2xl">
                 <div className="flex items-center gap-3">
                     <ShieldCheck className="text-brandBlue" size={20} />

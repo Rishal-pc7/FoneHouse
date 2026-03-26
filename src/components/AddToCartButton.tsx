@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { addProductToCart } from '@/app/actions/addToCart';
 
 interface AddToCartButtonProps {
     productId: number;
@@ -19,17 +20,11 @@ export default function AddToCartButton({ productId, className, isOutOfStock, pr
     const addToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        setCount(prev => prev + 1);
-        const response = await fetch("/api/cart/addToCart", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productId, price })
-        });
-        if (!response.ok) throw new Error("Failed to add product to cart");
-        const data = await response.json();
+        const response = await addProductToCart(productId, price);
+        if ('error' in response) throw new Error("Failed to add product to cart");
         router.refresh();
-        localStorage.setItem('cartCount', data.data.totalItems.toString());
-        setCount(data.data.totalItems);
+        localStorage.setItem('cartCount', response.totalItems.toString());
+        setCount(response.totalItems);
     };
 
     return (

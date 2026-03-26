@@ -35,7 +35,9 @@ export default async function EditProductPage({ params }: PageProps) {
         isInStock: product.isInStock,
         img: product.img,
         images: product.images,
-        specifications: product.specifications as any
+        specifications: product.specifications as any,
+        warrantyYears: product.warrantyYears,
+        shipping: product.shipping as 'FREE' | 'PAID'
     };
 
     return (

@@ -11,7 +11,7 @@ export type Product = {
     stock: number;
     isInStock: boolean;
     img: string;
-    images: string[];
+    images?: string[];
     created_at: Date;
     specifications: JsonValue;
     warrantyYears: number;

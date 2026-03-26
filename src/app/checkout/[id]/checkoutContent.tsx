@@ -97,6 +97,8 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
             
             const data = await response.json();
             if (paymentMethod === "prepaid") {
+                console.log(data);
+                
                 localStorage.setItem("orderId", data.data.order_no);
                 localStorage.setItem("sessionId", data.data.session_id);
                 window.location.href = data.data.checkout_url;

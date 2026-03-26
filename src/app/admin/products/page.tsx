@@ -14,5 +14,5 @@ export default async function ProductsPage() {
             price: product.price.toNumber(),
         };
     });
-    return <ProductsTableWrapper initialProducts={formattedProducts as any} />;
+    return <ProductsTableWrapper initialProducts={formattedProducts} />;
 }
