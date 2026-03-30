@@ -15,14 +15,15 @@ interface AddToCartButtonProps {
 }
 
 export default function AddToCartButton({ productId, className, isOutOfStock, price }: AddToCartButtonProps) {
-    const { setCount} = useCart();
-    const router = useRouter();
+    const { setCount,products} = useCart();
     const addToCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         e.stopPropagation();
+        if(!products.find(item => item==productId)){
+            setCount((prev) => prev + 1)
+        }
         const response = await addProductToCart(productId, price);
         if ('error' in response) throw new Error("Failed to add product to cart");
-        router.refresh();
         localStorage.setItem('cartCount', response.totalItems.toString());
         setCount(response.totalItems);
     };

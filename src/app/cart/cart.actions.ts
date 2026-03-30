@@ -11,7 +11,7 @@ export async function getCart() {
 
     let cart = null;
 
-    if (userId) {
+    if (userId && session?.user?.role === "USER") {
         cart = await prisma.cart.findUnique({
             where: { userId: parseInt(userId) },
             include: {

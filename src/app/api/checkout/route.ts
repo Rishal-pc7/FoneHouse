@@ -131,7 +131,7 @@ async function createOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
         payment_type: "one_off", // Crucial for Tabby
         currency_code: "SAR",
         amount: totalPrice,
-        pg_codes: ["credit-card-bsf"],
+        pg_codes: ["mada-visa-master","apple-pay","tamara","tabby"],
         order_no: `ORD-${order.id}`, // Add prefix to make it meaningful in Ottu dashboard
         customer_id: order.userId ? order.userId.toString() : "guest",
         customer_email: values.email,
@@ -174,7 +174,7 @@ async function updateOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
         payment_type: "one_off", // Crucial for Tabby
         currency_code: "SAR",
         amount: totalPrice,
-        pg_codes: ["credit-card-bsf"],
+        pg_codes: ["mada-visa-master","apple-pay","tamara","tabby"],
         order_no: `ORD-${order.id}`, // Add prefix to make it meaningful in Ottu dashboard
         customer_id: order.userId ? order.userId.toString() : "guest",
         customer_email: values.email,

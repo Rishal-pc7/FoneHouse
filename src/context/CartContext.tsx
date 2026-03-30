@@ -6,6 +6,8 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 interface CartContextType {
     cartCount: number;
     setCount: React.Dispatch<React.SetStateAction<number>>;
+    products:number[];
+    setProducts:React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -13,6 +15,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children, hasSession }: { children: ReactNode; hasSession: boolean }) {
 
     const [cartCount, setCount] = useState<number>(0);
+    const [products,setProducts]=useState<number[]>([])
 
     useEffect(() => {
         if (!hasSession) {
@@ -25,9 +28,12 @@ export function CartProvider({ children, hasSession }: { children: ReactNode; ha
             }
         }
     }, [hasSession]);
+    useEffect(()=>{
+        
+    },[])
 
     return (
-        <CartContext.Provider value={{ cartCount, setCount }}>
+        <CartContext.Provider value={{ cartCount, setCount,products,setProducts }}>
             {children}
         </CartContext.Provider>
     );

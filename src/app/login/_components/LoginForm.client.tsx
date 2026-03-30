@@ -43,7 +43,10 @@ export default function LoginForm() {
             if (res?.error) {
                 setServerError("Invalid email or password");
             } else if (res?.ok) {
-                await updateCartSession();
+                const res=await updateCartSession();
+                if(res.status && res.cartCount){
+                    localStorage.setItem("cartCount",res.cartCount.toString());
+                }
                 window.location.href = callbackUrl;
             }
         } catch (error) {

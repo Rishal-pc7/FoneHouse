@@ -12,11 +12,11 @@ export async function addProductToCart(productId:number,price:number){
             let sessionId = cookieStore.get('session_id')?.value;
             const userId = session?.user?.id
             let cart = null
-            if (!sessionId && !userId) {
+            if (!sessionId && (!userId || session?.user?.role !== "USER")) {
                 sessionId = crypto.randomUUID();
                 cookieStore.set('session_id', sessionId, { maxAge: 60 * 60 * 24 * 30 }); // 30 days
     
-            } else if (userId) {
+            } else if (userId && session?.user?.role === "USER") {
                 cart = await prisma.cart.findUnique({
                     where: {
                         userId: parseInt(userId)
@@ -33,7 +33,7 @@ export async function addProductToCart(productId:number,price:number){
             }
     
             if (!cart) {
-                const user = userId ? parseInt(userId) : null
+                const user = userId && session?.user?.role === "USER" ? parseInt(userId) : null
                 cart = await prisma.cart.create({
                     data: {
     
@@ -44,29 +44,44 @@ export async function addProductToCart(productId:number,price:number){
                     }
                 })
             }
-            const cartItem = await prisma.cartItem.upsert({
+            const existingItem = await prisma.cartItem.findUnique({
                 where: {
                     cartId_productId: {
                         cartId: cart.id,
                         productId: productId
                     }
-                },
-                update: {
-                    quantity: { increment: 1 }
-                },
-                create: {
-                    cartId: cart.id,
-                    productId: productId,
-                    quantity: 1
                 }
             })
+            let cartItem;
+            let isNewItem=false
+            if(existingItem){
+                cartItem=await prisma.cartItem.update({
+                    where: {
+                        cartId_productId: {
+                            cartId: cart.id,
+                            productId: productId
+                        }
+                    },
+                    data: {
+                        quantity: { increment: 1 }
+                    }})
+            }else{
+                isNewItem=true
+                cartItem=await prisma.cartItem.create({
+                    data: {
+                        cartId: cart.id,
+                        productId: productId,
+                        quantity: 1
+                    }
+                })
+            }
             const updatedCart = await prisma.cart.update({
                 where: {
                     id: cart.id
                 },
                 data: {
-                    totalPrice: cart.totalPrice.toNumber() + (cartItem.quantity * price),
-                    totalItems: cart.totalItems + 1
+                    totalPrice: {increment:price},
+                    totalItems:isNewItem?{increment:1}:undefined
                 }
             })
             revalidatePath('/cart');

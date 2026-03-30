@@ -1,7 +1,7 @@
 'use client';
 import { updateCartItemQuantity, removeCartItem } from '@/services/cart';
 import { useCart } from '@/context/CartContext';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { SerializedCart } from './cart.types';
 import { CartItemClient } from './CartItem.client';
 import { OrderSummaryClient } from './OrderSummary.client';
@@ -16,7 +16,7 @@ const DialogFooter = dynamic(() => import('@/components/ui/dialog').then(mod => 
 
 import { Button } from '@/components/ui/button';
 export default function CartContent({ cart }: { cart: SerializedCart | null }) {
-    const { cartCount, setCount } = useCart();
+    const { setCount,setProducts } = useCart();
     // Initialize state directly from props
     const [quantity, setQuantity] = useState<{ id: number, quantity: number }[]>(
         cart?.CartItem.map((item) => ({ id: item.productId, quantity: item.quantity })) || []
@@ -28,20 +28,27 @@ export default function CartContent({ cart }: { cart: SerializedCart | null }) {
     // Calculate total price locally from the cart prop since it's removed from context
     const [totalPrice, setTotalPrice] = useState<number>(cart?.totalPrice || 0)
 
-    // Cart actions placeholders - logic to be implemented by user
-    // Cart actions
+    useEffect(() => {
+        setCount(cart?.totalItems || 0)
+        if(cart && cart.CartItem[0]){
+            cart.CartItem.forEach((item)=>{
+                setProducts((prev) => {return [...prev,item.productId]})
+            })
+
+        }
+    },[cart])
+            
     const confirmDelete = async () => {
         if (!itemToDelete) return;
 
         setIsDeleting(true);
         try {
-            await removeCartItem(itemToDelete);
+            const data = await removeCartItem(itemToDelete);
 
             // Update cart count
-            const currentCount = parseInt(localStorage.getItem('cartCount') || '0');
-            const newCount = Math.max(0, currentCount - 1);
-            localStorage.setItem('cartCount', newCount.toString());
-            setCount(newCount);
+            const currentCount = data.totalItems || 0;
+            localStorage.setItem('cartCount', currentCount.toString());
+            setCount(currentCount);
 
             // Reload page to reflect changes
             window.location.reload();
@@ -76,9 +83,7 @@ export default function CartContent({ cart }: { cart: SerializedCart | null }) {
 
         try {
             const data = await updateCartItemQuantity(id, quantityChange, productId);
-            if (data?.data?.totalPrice !== undefined) {
-                setTotalPrice(data.data.totalPrice);
-            }
+            setTotalPrice(data.totalPrice);
         } catch (error) {
             console.error(error);
             // Revert on error
@@ -88,6 +93,7 @@ export default function CartContent({ cart }: { cart: SerializedCart | null }) {
                 )
             );
             setTotalPrice((prev) => prev - (quantityChange * price));
+            throw error
         }
     };
     return (
