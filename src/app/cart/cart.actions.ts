@@ -16,6 +16,7 @@ export async function getCart() {
             where: { userId: parseInt(userId) },
             include: {
                 CartItem: {
+                    orderBy: { id: 'asc' },
                     include: {
                         Products: {
                             select: {
@@ -38,6 +39,7 @@ export async function getCart() {
             where: { sessionId: sessionId },
             include: {
                 CartItem: {
+                    orderBy: { id: 'asc' },
                     include: {
                         Products: {
                             select: {
