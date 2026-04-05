@@ -115,6 +115,10 @@ model Offer {
   couponCode         String   @unique
   discountPercentage Int
   isActive           Boolean  @default(true)
+  startDate          DateTime?
+  expiryDate         DateTime?
+  minCartValue       Decimal?
+  applicableProducts Int[]    @default([])
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }

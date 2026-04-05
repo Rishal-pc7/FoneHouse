@@ -4,8 +4,6 @@ import { revalidatePath } from "next/cache";
 
 export const updateCartItemQuantity = async (id: number, quantity: number, productId: number) => {
     try {
-        console.log(quantity,id,productId);
-        
         const cartItem = await prisma.cartItem.update({
             where: {
                 id: id,
@@ -26,9 +24,7 @@ export const updateCartItemQuantity = async (id: number, quantity: number, produ
                 totalPrice: {increment:quantity*cartItem.Products.price.toNumber()}
             }
         })
-            
         revalidatePath("/cart")
-
         return {totalPrice:cart.totalPrice.toNumber(),quantity:cartItem.quantity};
     } catch (error) {
         console.error('Error updating cart item quantity:', error);
@@ -42,24 +38,19 @@ export const removeCartItem = async (id: number) => {
             where: { id: id },
             include: { Products: true }
         });
-
         if (!cartItem) {
             throw new Error("Cart Item Not found") 
         }
-
-        // Delete the cart item
         await prisma.cartItem.delete({
             where: { id: id }
         });
-
-        // Update the cart total price
         const cart = await prisma.cart.update({
             where: { id: cartItem.cartId },
             data: {
                 totalPrice: { decrement: cartItem.quantity * cartItem.Products.price.toNumber() },
                 totalItems: { decrement: 1 }
             }
-        });
+        })
         return {totalPrice:cart.totalPrice.toNumber(),totalItems:cart.totalItems};
     } catch (error) {
         console.error('Error removing cart item:', error);

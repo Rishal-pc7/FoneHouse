@@ -131,8 +131,8 @@ async function createOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
         payment_type: "one_off", // Crucial for Tabby
         currency_code: "SAR",
         amount: totalPrice,
-        pg_codes: ["mada-visa-master","apple-pay","tamara","tabby"],
-        order_no: `ORD-${order.id}`, // Add prefix to make it meaningful in Ottu dashboard
+        pg_codes: ["mada-visa-master","apple-pay","tamara"],
+        order_no: `ORD-${order.id}-${Date.now()}`, // Make it unique in create and updating ottu payment
         customer_id: order.userId ? order.userId.toString() : "guest",
         customer_email: values.email,
         customer_phone: values.phone, // e.g. +966500000000
@@ -151,7 +151,8 @@ async function createOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
         }
     };
     try{
-
+        
+        console.log(payload.order_no)
         const response = await fetch(`${process.env.OTTU_BASE_URL}b/checkout/v1/pymt-txn/`, {
             method: "POST",
             headers: {
@@ -174,8 +175,8 @@ async function updateOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
         payment_type: "one_off", // Crucial for Tabby
         currency_code: "SAR",
         amount: totalPrice,
-        pg_codes: ["mada-visa-master","apple-pay","tamara","tabby"],
-        order_no: `ORD-${order.id}`, // Add prefix to make it meaningful in Ottu dashboard
+        pg_codes: ["mada-visa-master","apple-pay","tamara"],
+        order_no: `ORD-${order.id}-${Date.now()}`, // Make it unique in create and updating ottu payment
         customer_id: order.userId ? order.userId.toString() : "guest",
         customer_email: values.email,
         customer_phone: values.phone, // e.g. +966500000000
@@ -193,6 +194,7 @@ async function updateOttuPayment(totalPrice:number,values:CheckoutFormValues,ord
             phone: values.phone
         }
     };
+    console.log(payload.order_no)
     try{
 
         const response = await fetch(`${process.env.OTTU_BASE_URL}b/checkout/v1/pymt-txn/${sessionId}`, {

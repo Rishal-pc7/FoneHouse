@@ -18,6 +18,7 @@ export default function ProductsTableWrapper({ initialProducts }: Props) {
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [isLoading, setIsLoading] = useState(false);
     const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
     const handleDeleteClick = (id: number) => setDeleteId(id);
 
@@ -29,7 +30,7 @@ export default function ProductsTableWrapper({ initialProducts }: Props) {
         if (result.success) {
             setProducts(prev => prev.filter(p => p.id !== deleteId));
         } else {
-            alert('Failed to delete product');
+            setAlertMessage('Failed to delete product');
         }
 
         setDeleteId(null);
@@ -56,6 +57,20 @@ export default function ProductsTableWrapper({ initialProducts }: Props) {
                         <Button variant="destructive" onClick={confirmDelete} disabled={isLoading}>
                             {isLoading ? 'Deleting...' : 'Delete'}
                         </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={!!alertMessage} onOpenChange={(open) => !open && setAlertMessage(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Notice</DialogTitle>
+                        <DialogDescription>
+                            {alertMessage}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setAlertMessage(null)}>Close</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

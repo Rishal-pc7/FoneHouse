@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import Mail from 'lucide-react/dist/esm/icons/mail';
-import MoreVertical from 'lucide-react/dist/esm/icons/more-vertical';
 import Search from 'lucide-react/dist/esm/icons/search';
-import { UserDto } from './users.actions';
+import Trash2 from 'lucide-react/dist/esm/icons/trash-2';
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
+import { UserDto, deleteUserAction } from './users.actions';
+import { useRouter } from 'next/navigation';
+
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface UsersTableProps {
   initialUsers: UserDto[];
@@ -12,6 +18,33 @@ interface UsersTableProps {
 
 export default function UsersTable({ initialUsers }: UsersTableProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const router = useRouter();
+
+  const handleDeleteClick = (id: number) => {
+    setConfirmDeleteId(id);
+  };
+
+  const executeDelete = async () => {
+    if (!confirmDeleteId) return;
+    setIsDeleting(confirmDeleteId);
+    try {
+      const result = await deleteUserAction(confirmDeleteId);
+      if (result.success) {
+        setConfirmDeleteId(null);
+        router.refresh();
+      } else {
+        setConfirmDeleteId(null);
+        setAlertMessage("Failed to delete user: " + result.message);
+      }
+    } catch (err: any) {
+      setConfirmDeleteId(null);
+      setAlertMessage("Network/Server Action Error: " + err.message + " --- Please hard refresh the page (F5) and try again.");
+    }
+    setIsDeleting(null);
+  };
 
   const filteredUsers = initialUsers.filter(user => 
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,9 +70,12 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                 />
                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
             </div>
-            <button className="bg-brandBlue text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-600 transition-colors shadow-lg shadow-brandBlue/20">
+            <Link 
+                href="/admin/users/add"
+                className="bg-brandBlue text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-600 transition-colors shadow-lg shadow-brandBlue/20"
+            >
                 Add User
-            </button>
+            </Link>
         </div>
       </div>
 
@@ -79,8 +115,13 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
                                   </span>
                               </td>
                               <td className="px-6 py-4 text-right">
-                                  <button className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                                      <MoreVertical className="w-5 h-5" />
+                                  <button 
+                                      onClick={() => handleDeleteClick(user.id)}
+                                      disabled={isDeleting === user.id}
+                                      className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                                      title="Delete User"
+                                  >
+                                      {isDeleting === user.id ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
                                   </button>
                               </td>
                           </tr>
@@ -100,6 +141,37 @@ export default function UsersTable({ initialUsers }: UsersTableProps) {
               </p>
           </div>
       </div>
+
+      <Dialog open={!!confirmDeleteId} onOpenChange={(open) => !open && setConfirmDeleteId(null)}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Delete User</DialogTitle>
+                <DialogDescription>
+                    Are you sure you want to delete this user? This will anonymize their orders and carts. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setConfirmDeleteId(null)} disabled={isDeleting !== null}>Cancel</Button>
+                <Button variant="destructive" onClick={executeDelete} disabled={isDeleting !== null}>
+                    {isDeleting !== null ? 'Deleting...' : 'Delete'}
+                </Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!alertMessage} onOpenChange={(open) => !open && setAlertMessage(null)}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Notice</DialogTitle>
+                <DialogDescription>
+                    {alertMessage}
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+                <Button variant="outline" onClick={() => setAlertMessage(null)}>Close</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import { Form } from '@/components/ui/form';
 import { useCart } from '@/context/CartContext';
 import { checkoutFormSchema, CheckoutFormValues, SerializedCart } from './checkout.types';
-import { deleteOrderAction, getPendingOrderAction } from './checkout.actions';
+import { deleteOrderAction, getPendingOrderAction, validateCouponAction } from './checkout.actions';
 import { CheckoutPopup } from './checkout-popup.client';
 import { CheckoutFormFields } from './checkout-form-fields.client';
 import { CheckoutSummary } from './checkout-summary.client';
@@ -19,8 +19,18 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
     const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const { setCount } = useCart();
-    const totalPrice = cart ? cart.totalPrice : 0;
     
+    const [couponCodeInput, setCouponCodeInput] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercentage: number } | null>(null);
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+    const [couponError, setCouponError] = useState<string | null>(null);
+
+    const baseTotalPrice = cart ? cart.totalPrice : 0;
+    const discountAmount = appliedCoupon ? (baseTotalPrice * appliedCoupon.discountPercentage) / 100 : 0;
+    const discountedTotalPrice = baseTotalPrice - discountAmount;
+    const tax = discountedTotalPrice * 0.15;
+    const finalPrice = discountedTotalPrice + tax;
+
     const form = useForm<CheckoutFormValues>({
         resolver: zodResolver(checkoutFormSchema),
         defaultValues: {
@@ -87,18 +97,43 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
         setShowPendingPopup(false);
     }
 
+    async function handleApplyCoupon() {
+        if (!couponCodeInput.trim()) return;
+        setIsApplyingCoupon(true);
+        setCouponError(null);
+        try {
+            const productIds = cart?.CartItem?.map(item => item.productId) || [];
+            // Parse baseTotalPrice if it's decimal
+            const result = await validateCouponAction(couponCodeInput.trim(), Number(baseTotalPrice), productIds);
+            if (result.isValid && result.discountPercentage) {
+                setAppliedCoupon({ code: couponCodeInput.trim(), discountPercentage: result.discountPercentage });
+                // We keep the couponCodeInput intact so it displays in the disabled input
+            } else {
+                setCouponError(result.message || "Invalid coupon.");
+            }
+        } catch (err) {
+            setCouponError("Failed to apply coupon.");
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    }
+
+    function handleRemoveCoupon() {
+        setAppliedCoupon(null);
+        setCouponCodeInput('');
+    }
+
     async function onSubmit(values: CheckoutFormValues) {
         setIsSubmitting(true);
-        const tax=totalPrice*0.15;
         
         try {
-            const response = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cartId: cart?.id, values,orderId:pendingOrderId?parseInt(pendingOrderId.replace('ORD-', ''), 10):null,totalPrice:totalPrice+tax,sessionId:sessionId?sessionId:null }) });
+            const response = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cartId: cart?.id, values,orderId:pendingOrderId?parseInt(pendingOrderId.split('-')[1], 10):null,totalPrice:Number(finalPrice),sessionId:sessionId?sessionId:null }) });
             if (!response.ok) throw new Error('Failed to create order');
             
             const data = await response.json();
             if (paymentMethod === "prepaid") {
                 console.log(data);
-                
+                localStorage.setItem("error",JSON.stringify(data.data))
                 localStorage.setItem("orderId", data.data.order_no);
                 localStorage.setItem("sessionId", data.data.session_id);
                 window.location.href = data.data.checkout_url;
@@ -158,10 +193,21 @@ export default function CheckoutContent({ cart }: { cart: SerializedCart | null 
                     <div className="lg:w-1/3 shrink-0">
                         <CheckoutSummary 
                             cart={cart}
-                            totalPrice={totalPrice}
+                            baseTotalPrice={Number(baseTotalPrice)}
+                            discountAmount={Number(discountAmount)}
+                            discountedTotalPrice={Number(discountedTotalPrice)}
+                            tax={Number(tax)}
+                            finalPrice={Number(finalPrice)}
                             paymentMethod={paymentMethod}
                             isSubmitting={isSubmitting}
                             onSubmitClick={form.handleSubmit(onSubmit)}
+                            couponCodeInput={couponCodeInput}
+                            setCouponCodeInput={setCouponCodeInput}
+                            onApplyCoupon={handleApplyCoupon}
+                            isApplyingCoupon={isApplyingCoupon}
+                            appliedCoupon={appliedCoupon}
+                            couponError={couponError}
+                            onRemoveCoupon={handleRemoveCoupon}
                         />
                     </div>
                 </div>

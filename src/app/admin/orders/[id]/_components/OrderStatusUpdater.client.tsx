@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { updateOrderStatus } from '../../orders.actions';
 import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface Props {
     orderId: number;
@@ -12,6 +14,7 @@ interface Props {
 export function OrderStatusUpdater({ orderId, initialStatus }: Props) {
     const [status, setStatus] = useState(initialStatus.toLowerCase());
     const [isUpdating, setIsUpdating] = useState(false);
+    const [alertMessage, setAlertMessage] = useState<string | null>(null);
     const router = useRouter();
 
     const handleUpdate = async () => {
@@ -20,10 +23,10 @@ export function OrderStatusUpdater({ orderId, initialStatus }: Props) {
         setIsUpdating(false);
 
         if (result.success) {
-            alert('Order status updated successfully');
+            setAlertMessage('Order status updated successfully');
             router.refresh();
         } else {
-            alert('Failed to update order status');
+            setAlertMessage('Failed to update order status');
         }
     };
 
@@ -54,6 +57,20 @@ export function OrderStatusUpdater({ orderId, initialStatus }: Props) {
             >
                 {isUpdating ? 'Updating...' : 'Update Status'}
             </button>
+
+            <Dialog open={!!alertMessage} onOpenChange={(open) => !open && setAlertMessage(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Notice</DialogTitle>
+                        <DialogDescription>
+                            {alertMessage}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setAlertMessage(null)}>Close</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

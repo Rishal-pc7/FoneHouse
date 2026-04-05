@@ -6,9 +6,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("🔔 Webhook Received!", body);
     if (body.state === 'paid' || body.state === 'authorized') {
-      // order_no comes in as "ORD-123" now
+      // order_no comes in as "ORD-123-1718223..."
       const orderIdString = body.order_no;
-      const orderId = parseInt(orderIdString.replace("ORD-", ""), 10);
+      const parts = orderIdString.split('-');
+      const orderId = parseInt(parts[1], 10);
 
       console.log(`✅ Payment success for Order: ${orderId}`);
 
@@ -41,7 +42,8 @@ export async function POST(request: NextRequest) {
     } else {
       console.log(`❌ Payment failed or pending for Order: ${body.order_no}`);
       const orderIdString = body.order_no;
-      const orderId = parseInt(orderIdString.replace("ORD-", ""), 10);
+      const parts = orderIdString.split('-');
+      const orderId = parseInt(parts[1], 10);
       const orders = await prisma.orders.findUnique({
         where: { id: orderId }
       })

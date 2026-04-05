@@ -21,7 +21,7 @@ export function CheckoutPopup({ pendingOrderId, onStartFresh, onReviewOrder }: C
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Pending Order Found</h2>
                 <p className="text-gray-500 dark:text-gray-400 mb-4 max-w-sm">
-                    We noticed you have a pending order (#{pendingOrderId}) that hasn't been paid. Would you like to review it or start fresh?
+                    We noticed you have a pending order (ORD-{pendingOrderId?.split('-')[1] || pendingOrderId?.replace('ORD-', '')}) that hasn't been paid. Would you like to review it or start fresh?
                 </p>
                 
                 <label className="flex items-center gap-2 mb-6 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">

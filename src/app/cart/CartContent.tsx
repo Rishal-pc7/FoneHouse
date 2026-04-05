@@ -82,8 +82,8 @@ export default function CartContent({ cart }: { cart: SerializedCart | null }) {
         setTotalPrice((prev) => prev + (quantityChange * price));
 
         try {
-            const data = await updateCartItemQuantity(id, quantityChange, productId);
-            setTotalPrice(data.totalPrice);
+            await updateCartItemQuantity(id, quantityChange, productId);
+            
         } catch (error) {
             console.error(error);
             // Revert on error

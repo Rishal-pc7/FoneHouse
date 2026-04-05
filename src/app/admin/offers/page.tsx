@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Plus from 'lucide-react/dist/esm/icons/plus';
 import db from '@/lib/db';
+import DeleteOfferButton from './delete-offer-button.client';
 
 export const dynamic = 'force-dynamic';
 
@@ -34,6 +35,7 @@ export default async function OffersPage() {
                                 <th className="px-6 py-4 font-medium">Coupon Code</th>
                                 <th className="px-6 py-4 font-medium">Discount</th>
                                 <th className="px-6 py-4 font-medium">Status</th>
+                                <th className="px-6 py-4 font-medium text-right">Expiry Date</th>
                                 <th className="px-6 py-4 font-medium text-right">Actions</th>
                             </tr>
                         </thead>
@@ -49,18 +51,21 @@ export default async function OffersPage() {
                                         {offer.discountPercentage}%
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${offer.isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
-                                            {offer.isActive ? 'Active' : 'Inactive'}
+                                        <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${offer.isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : (offer.startDate && new Date() < offer.startDate ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400')}`}>
+                                            {offer.isActive ? 'Active' : (offer.startDate && new Date() < offer.startDate ? 'Scheduled' : 'Inactive')}
                                         </span>
                                     </td>
+                                    <td className="px-6 py-4 text-right text-gray-500 dark:text-gray-400">
+                                        {offer.expiryDate ? new Date(offer.expiryDate).toLocaleDateString() : 'No expiry'}
+                                    </td>
                                     <td className="px-6 py-4 text-right">
-                                        <span className="text-gray-400 text-sm">N/A</span>
+                                        <DeleteOfferButton id={offer.id} couponCode={offer.couponCode} />
                                     </td>
                                 </tr>
                             ))}
                             {offers.length === 0 && (
                                 <tr>
-                                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                         No offers found. Add one to get started.
                                     </td>
                                 </tr>
