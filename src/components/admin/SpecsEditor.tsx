@@ -133,7 +133,7 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
 
     return (
         <div className="space-y-6">
-            <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-3 sm:p-6 shadow-sm">
                 <label className="block text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Specifications Type</label>
                 <div className="flex bg-gray-100 dark:bg-zinc-800 p-1 rounded-lg w-fit">
                     <button
@@ -159,7 +159,7 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl p-3 sm:p-6 shadow-sm">
                 <label className="block text-sm font-semibold mb-4 text-gray-700 dark:text-gray-300">
                     {mode === 'object' ? 'Key Features & Specs' : 'Feature List'}
                 </label>
@@ -172,7 +172,7 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="flex gap-3 items-start"
+                                className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-start"
                             >
                                 {mode === 'object' && (
                                     <input
@@ -191,14 +191,16 @@ export default function SpecsEditor({ onChange, initialData }: Props) {
                                     onChange={(e) => updateRow(index, 'value', e.target.value)}
                                 />
 
-                                <button
-                                    type="button"
-                                    onClick={() => removeRow(index)}
-                                    className="p-2.5 text-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
-                                    disabled={rows.length === 1}
-                                >
-                                    <Trash2 size={18} />
-                                </button>
+                                <div className="sm:w-auto flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={() => removeRow(index)}
+                                        className="p-2.5 text-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors w-full sm:w-auto flex justify-center"
+                                        disabled={rows.length === 1}
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
                             </motion.div>
                         ))}
                     </AnimatePresence>

@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Cart {
+  id         Int        @id @default(autoincrement())
+  userId     Int?       @unique
+  sessionId  String?    @unique
+  updatedAt  DateTime   @default(now())
+  createdAt  DateTime   @default(now())
+  totalPrice Decimal
+  totalItems Int
+  Users      Users?     @relation(fields: [userId], references: [id])
+  CartItem   CartItem[]
+  Orders     Orders[]
+
+  @@index([sessionId])
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int      @default(1)
+  Cart      Cart     @relation(fields: [cartId], references: [id])
+  Products  Products @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+model Orders {
+  id            Int         @id @default(autoincrement())
+  userId        Int?
+  sessionId     String?
+  totalPrice    Decimal
+  cartId        Int
+  status        String      @default("PENDING")
+  email         String
+  firstName     String
+  lastName      String
+  address       String
+  city          String
+  postalCode    String
+  phone         String
+  paymentMethod String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @default(now())
+  OrderItem     OrderItem[]
+  Cart          Cart        @relation(fields: [cartId], references: [id])
+  Users         Users?      @relation(fields: [userId], references: [id])
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int      @default(1)
+  Orders    Orders   @relation(fields: [orderId], references: [id])
+  Products  Products @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+}
+
+model Products {
+  id             Int         @id @default(autoincrement())
+  name           String
+  brand          String      @default("Unknown")
+  stock          Int         @default(0)
+  isInStock      Boolean     @default(true)
+  price          Decimal
+  category       String
+  img            String
+  images         String[]    @default([])
+  description    String?
+  specifications Json?
+  created_at     DateTime    @default(now())
+  shipping       String      @default("FREE")
+  warrantyYears  Int         @default(1)
+  rating         Decimal     @default(0)
+  reviewCount    Int         @default(0)
+  CartItem       CartItem[]
+  OrderItem      OrderItem[]
+  Review         Review[]
+}
+
+model Users {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  role       String   @default("USER")
+  created_at DateTime @default(now())
+  Cart       Cart?
+  Orders     Orders[]
+  Session    Session?
+  Review     Review[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int      @unique
+  expires      DateTime
+  role         String   @default("USER")
+  user         Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Offer {
+  id                 Int      @id @default(autoincrement())
+  couponCode         String   @unique
+  discountPercentage Int
+  isActive           Boolean  @default(true)
+  startDate          DateTime?
+  expiryDate         DateTime?
+  minCartValue       Decimal?
+  applicableProducts Int[]    @default([])
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  productId Int
+  userId    Int
+  username  String
+  createdAt DateTime @default(now())
+  Products  Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  Users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
