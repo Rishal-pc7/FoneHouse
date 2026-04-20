@@ -1,5 +1,6 @@
 import prisma from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -38,6 +39,8 @@ export async function POST(request: NextRequest) {
           }
         })
       }
+      
+      sendOrderConfirmationEmail(orderId);
 
     } else {
       console.log(`❌ Payment failed or pending for Order: ${body.order_no}`);
