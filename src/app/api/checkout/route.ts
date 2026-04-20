@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import { Orders } from "@/generated/prisma/client";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 type CheckoutFormValues = {
     email: string;
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
                 const data=await createOttuPayment(totalPrice,values,updatedOrder)
                 return NextResponse.json({ data }, { status: 200 })
             }
+            sendOrderConfirmationEmail(updatedOrder.id);
             return NextResponse.json({ message: "Order updated successfully", order: updatedOrder }, { status: 200 })
         }
         const order = await prisma.orders.create({
@@ -80,6 +82,7 @@ export async function POST(request: NextRequest) {
             const data=await createOttuPayment(totalPrice,values,order)
             return NextResponse.json({ data }, { status: 200 })
         }
+        sendOrderConfirmationEmail(order.id);
         return NextResponse.json({ message: "Order created successfully", order }, { status: 200 })
     } catch (error) {
         console.log(error)
